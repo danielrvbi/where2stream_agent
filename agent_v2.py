@@ -1,243 +1,22 @@
 #!/usr/bin/env python
 # coding: utf-8
-# Standard library imports
-import argparse
-from enum import Enum
-import json
-import logging
-import os
-import sys
-from textwrap import dedent as ded
-from typing import Annotated, Any, Dict, List, NotRequired, Optional, TypedDict
-from uuid import UUID
-from datetime import datetime
-from string import ascii_lowercase, ascii_uppercase
-
-# Third-party imports
-from langchain_core.callbacks import BaseCallbackHandler
-from langchain_core.messages import AIMessage, AnyMessage, BaseMessage, HumanMessage, SystemMessage, ToolMessage
-from langchain_core.outputs import LLMResult
+from typing import Any, Dict, List, Optional
+from langchain_core.messages import SystemMessage
 from langchain_core.runnables import RunnableConfig
 from langchain_core.tools import tool
-from langchain_ollama import ChatOllama
-from langgraph.graph import END, MessagesState, START, StateGraph, add_messages
+from langgraph.graph import MessagesState, START, StateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
 from langgraph.checkpoint.memory import MemorySaver
-import pandas as pd
-import pycountry
-from pydantic import BaseModel, Field, conlist, constr, model_validator
-import requests
-from ollama import Client
 
-# Variable assignments
-dedent = lambda x: ded(x.strip())
-class SimpleJSONTraceHandler(BaseCallbackHandler):
-    def __init__(self, filepath: str = "simple_traces.json"):
-        self.filepath = filepath
-        self.traces = []
-
-        if os.path.exists(self.filepath):
-            try:
-                with open(self.filepath, 'r') as f:
-                    self.traces = json.load(f)
-            except json.JSONDecodeError:
-                pass
-
-    def _save_traces(self) -> None:
-        with open(self.filepath, 'w') as f:
-            json.dump(self.traces, f, indent=4)
-
-    def on_chat_model_start(
-        self,
-        serialized: Dict[str, Any],
-        messages: List[List[BaseMessage]],
-        *,
-        run_id: UUID,
-        **kwargs: Any,
-    ) -> None:
-
-        # Extract just the role and content from the inputs
-        simple_inputs = [{"role": msg.type, "content": str(msg.content)} for msg in messages[0]]
-
-        trace_entry = {
-            "run_id": str(run_id),
-            "model_info": kwargs.get("invocation_params", {}).get("model", "unknown"),
-            "start_time": datetime.utcnow().isoformat() + "Z",
-            "status": "running",
-            "input_messages": simple_inputs
-        }
-
-        self.traces.append(trace_entry)
-        self._save_traces()
-
-    def on_llm_end(
-        self,
-        response: LLMResult,
-        *,
-        run_id: UUID,
-        **kwargs: Any,
-    ) -> None:
-
-        for trace in self.traces:
-            if trace.get("run_id") == str(run_id):
-                trace["status"] = "completed"
-                trace["end_time"] = datetime.utcnow().isoformat() + "Z"
-
-                # Extract output and token usage (Ollama specific mapping)
-                if response.generations and response.generations[0]:
-                    gen = response.generations[0][0]
-                    trace["output_messages"] = [{"role": "ai", "content": gen.text}]
-
-                    # Grab Ollama token counts from metadata
-                    metadata = getattr(gen, 'message', type('obj', (object,), {'response_metadata': {}})).response_metadata
-                    trace["token_usage"] = {
-                        "prompt_tokens": metadata.get("prompt_eval_count", 0),
-                        "completion_tokens": metadata.get("eval_count", 0)
-                    }
-
-                    # Update model_info if Ollama provided a more specific one in the response
-                    if metadata.get("model"):
-                        trace["model_info"] = metadata.get("model")
-                break
-
-        self._save_traces()
-
-    def on_llm_error(
-        self,
-        error: BaseException,
-        *,
-        run_id: UUID,
-        **kwargs: Any,
-    ) -> None:
-
-        for trace in self.traces:
-            if trace.get("run_id") == str(run_id):
-                trace["status"] = "failed"
-                trace["end_time"] = datetime.utcnow().isoformat() + "Z"
-                trace["output_messages"] = [{"role": "error", "content": str(error)}]
-                break
-
-        self._save_traces()
-#llm = ChatOllama(model="llama3.1:8b", temperature=0.0)
-#llm = ChatOllama(model="gpt-oss:20b", temperature=0.0, keep_alive=False)
-from dotenv import load_dotenv
-load_dotenv()
-
-TMDB_API_KEY = os.getenv("TMDB_API_KEY") or os.getenv("TMDB_key")
-TMDB_BASE = "https://api.themoviedb.org/3"
-# 1. Initialize the custom JSON handler
-json_tracer = SimpleJSONTraceHandler(filepath="agent_traces.json")
-
-def get_all_ollama_models():
-    """
-    Retrieves a list of all local Ollama models.
-    """
-    try:
-        local_client = Client() # Defaults to http://localhost:11434
-        local_response = local_client.list()
-        return [model["model"] for model in local_response.get("models", [])]
-    except Exception as e:
-        print(f"Error fetching local models: {e}")
-        return []
-
-
-def get_ollama_model(model_name: str) -> ChatOllama:
-    """
-    Initializes a ChatOllama instance for the specified model.
-    """
-    return ChatOllama(model=model_name, temperature=0, callbacks=[json_tracer])
-    
-
-# Default models
-#DEFAULT_MODEL = "mistral-small3.2:24b"
-DEFAULT_MODEL = "glm-4.6:cloud"
-llm = get_ollama_model(DEFAULT_MODEL)
-llm_small = get_ollama_model("llama3.1:8b")
-SUBSCRIBED = {"NETFLIX", "AMAZON", "HBO", "MAX", "APPLE", "DISNEY", "HULU", "TUBI"}
-
-
-def _rq(url: str, params: Dict[str, Any]) -> Dict[str, Any]:
-    r = requests.get(url, params=params, timeout=25)
-    r.raise_for_status()
-    return r.json()
-
-
-def update_dict(a, b):
-    return {**a, **b}
-
-
-def rename_country(country):
-    name = pycountry.countries.get(alpha_2=country).name
-    flag = pycountry.countries.get(alpha_2=country).flag
-
-    return name.title()
-    return f"{name} {flag}"
-
-
-def filter_subscribed(x):
-    for i in SUBSCRIBED:
-        if i in x:
-            return True
-    return False
-
-
-ALL_FLAGS = (
-    pd.Series(
-        {
-            f"{a}{b}": pycountry.countries.get(alpha_2=f"{a}{b}")
-            for a in ascii_uppercase
-            for b in ascii_uppercase
-        }
-    )
-    .dropna()
-    .apply(lambda x: f"{x.name} ({x.flag})".upper())
+# Local imports
+from utils import (
+    TMDB_API_KEY, TMDB_BASE, DEFAULT_MODEL, SUBSCRIBED,
+    get_ollama_model, get_all_ollama_models, _rq, tmdb_table
 )
 
-def tmdb_table(results) -> dict:
-    "Get a table of the info of providers per country"
-    if results:
-        sub_df = pd.DataFrame(
-            {
-                rename_country(country): {
-                    k: [i["provider_name"] for i in v]
-                    for k, v in results[country].items()
-                    if k in ["ads", "flatrate", "free"]
-                }
-                for country in results.keys()
-            }
-        )
-
-        if sub_df.empty:
-            sub_df = pd.DataFrame(
-                {
-                    rename_country(country): {
-                        k: [i["provider_name"] for i in v]
-                        for k, v in results[country].items()
-                        if k in ["ads", "rent", "flatrate", "buy", "free"]
-                    }
-                    for country in results.keys()
-                }
-            )
-
-        if sub_df.empty:
-            return {}
-
-        return (
-            sub_df.stack()
-            .explode()
-            .sort_index()
-            .reset_index()
-            .set_axis(["Type", "Country", "Provider"], axis=1)
-            .assign(Provider=lambda df: df["Provider"].apply(lambda x: str(x).upper().strip()))
-            .loc[lambda df: df["Provider"].apply(filter_subscribed)]
-            .pivot_table(index=["Type", "Provider"], values="Country", aggfunc=list)
-            .groupby(level=0)
-            .apply(lambda g: g.droplevel(0).to_dict()["Country"])
-            .to_dict()
-        )
-    return {}
-
-# Assuming TMDB_API_KEY, TMDB_BASE, _rq, and tmdb_table are defined elsewhere in your file
+def get_ollama_model_with_tools(model_name: str, tools: list):
+    """Initializes a ChatOllama instance with tools bound."""
+    return get_ollama_model(model_name).bind_tools(tools)
 
 @tool
 def tmdb_search_movie(
@@ -303,7 +82,6 @@ def tmdb_search_tv(
 
     params = {"api_key": TMDB_API_KEY, "query": title, "include_adult": "false"}
     if year:
-        # TMDB uses first_air_date_year for TV series filtering
         params["first_air_date_year"] = year
 
     data = _rq(f"{TMDB_BASE}/search/tv", params)
@@ -313,7 +91,7 @@ def tmdb_search_tv(
         cands.append(
             {
                 "id": r.get("id"),
-                "title": r.get("name"),  # TV endpoint uses 'name' instead of 'title'
+                "title": r.get("name"),
                 "original_language": (r.get("original_language") or ""),
                 "release_year": (r.get("first_air_date") or "")[:4],
                 "overview": r.get("overview"),
@@ -335,10 +113,10 @@ def tmdb_tv_watch_providers(series_id: int) -> Dict[str, Any]:
 
     results = data.get("results", {})
     if results:
-        # We can reuse your existing tmdb_table function since the provider JSON structure is identical
         return tmdb_table(results)
 
     return {"message": "No watch providers found."}
+
 # 1. Define the tools array
 tools = [
     tmdb_search_movie, 
@@ -375,7 +153,7 @@ def agent(state: MessagesState, config: RunnableConfig):
 
     # Dynamic model selection from config
     model_name = config.get("configurable", {}).get("model_name", DEFAULT_MODEL)
-    current_llm = get_ollama_model(model_name).bind_tools(tools)
+    current_llm = get_ollama_model_with_tools(model_name, tools)
 
     # Invoke the LLM (which is aware of the tools)
     response = current_llm.invoke(messages)
@@ -389,16 +167,11 @@ workflow = StateGraph(MessagesState)
 
 # Add the standard nodes
 workflow.add_node("agent", agent)
-workflow.add_node("tools", ToolNode(tools)) # ToolNode automatically executes the requested tools
+workflow.add_node("tools", ToolNode(tools))
 
 # Define the flow
 workflow.add_edge(START, "agent")
-
-# tools_condition automatically checks if the LLM returned a tool call. 
-# If it did, it routes to "tools". If not, it routes to END.
 workflow.add_conditional_edges("agent", tools_condition)
-
-# After tools execute, always return the results back to the agent for the final answer
 workflow.add_edge("tools", "agent")
 
 # 5. Compile the graph into an executable application
