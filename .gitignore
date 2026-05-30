@@ -4,6 +4,7 @@
 # 2. Allow your specific files
 !agent_v2.py
 !chainapp.py
+!README.md
 
 # 3. Allow the .gitignore file itself (highly recommended)
 !.gitignore
