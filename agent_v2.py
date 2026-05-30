@@ -22,6 +22,7 @@ from langchain_core.tools import tool
 from langchain_ollama import ChatOllama
 from langgraph.graph import END, MessagesState, START, StateGraph, add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
+from langgraph.checkpoint.memory import MemorySaver
 import pandas as pd
 import pycountry
 from pydantic import BaseModel, Field, conlist, constr, model_validator
@@ -191,6 +192,7 @@ ALL_FLAGS = (
     .dropna()
     .apply(lambda x: f"{x.name} ({x.flag})".upper())
 )
+
 def tmdb_table(results) -> dict:
     "Get a table of the info of providers per country"
     if results:
@@ -234,8 +236,6 @@ def tmdb_table(results) -> dict:
             .to_dict()
         )
     return {}
-from typing import Optional, Dict, Any, List
-from langchain_core.tools import tool
 
 # Assuming TMDB_API_KEY, TMDB_BASE, _rq, and tmdb_table are defined elsewhere in your file
 
@@ -382,7 +382,7 @@ def agent(state: MessagesState, config: RunnableConfig):
 
     # Return the response to be appended to the state
     return {"messages": [response]}
-from langgraph.checkpoint.memory import MemorySaver
+
 
 # 4. Build the LangGraph Workflow
 workflow = StateGraph(MessagesState)
@@ -404,40 +404,6 @@ workflow.add_edge("tools", "agent")
 # 5. Compile the graph into an executable application
 memory = MemorySaver()
 agent_executor = workflow.compile(checkpointer=memory)
+
 def get_agent():
     return agent_executor
-
-if __name__ == "__main__":
-    resp = agent_executor.invoke({"messages": HumanMessage("Where to stream shrek 2")})
-    [i.pretty_print() for i in resp["messages"]]
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
