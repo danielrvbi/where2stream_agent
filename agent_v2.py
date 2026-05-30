@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # coding: utf-8
-
-# In[40]:
-
-
 # Standard library imports
 import argparse
 from enum import Enum
@@ -21,6 +17,7 @@ from string import ascii_lowercase, ascii_uppercase
 from langchain_core.callbacks import BaseCallbackHandler
 from langchain_core.messages import AIMessage, AnyMessage, BaseMessage, HumanMessage, SystemMessage, ToolMessage
 from langchain_core.outputs import LLMResult
+from langchain_core.runnables import RunnableConfig
 from langchain_core.tools import tool
 from langchain_ollama import ChatOllama
 from langgraph.graph import END, MessagesState, START, StateGraph, add_messages
@@ -29,14 +26,10 @@ import pandas as pd
 import pycountry
 from pydantic import BaseModel, Field, conlist, constr, model_validator
 import requests
+from ollama import Client
 
 # Variable assignments
 dedent = lambda x: ded(x.strip())
-
-
-# In[19]:
-
-
 class SimpleJSONTraceHandler(BaseCallbackHandler):
     def __init__(self, filepath: str = "simple_traces.json"):
         self.filepath = filepath
@@ -124,12 +117,6 @@ class SimpleJSONTraceHandler(BaseCallbackHandler):
                 break
 
         self._save_traces()
-
-
-
-# In[33]:
-
-
 #llm = ChatOllama(model="llama3.1:8b", temperature=0.0)
 #llm = ChatOllama(model="gpt-oss:20b", temperature=0.0, keep_alive=False)
 from dotenv import load_dotenv
@@ -137,32 +124,34 @@ load_dotenv()
 
 TMDB_API_KEY = os.getenv("TMDB_API_KEY") or os.getenv("TMDB_key")
 TMDB_BASE = "https://api.themoviedb.org/3"
-
-
-# In[21]:
-
-
 # 1. Initialize the custom JSON handler
 json_tracer = SimpleJSONTraceHandler(filepath="agent_traces.json")
 
-# 2. Initialize the Ollama Chat Model with the callback
-llm = ChatOllama(
-    model="mistral-small3.2:24b", # Or your preferred local model
-    temperature=0,
-    callbacks=[json_tracer]
-)
-
-# 2.1 Initialize the Small Ollama Chat Model with the callback
-llm_small = ChatOllama(
-    model="llama3.1:8b",
-    temperature=0,
-    callbacks=[json_tracer]
-)
+def get_all_ollama_models():
+    """
+    Retrieves a list of all local Ollama models.
+    """
+    try:
+        local_client = Client() # Defaults to http://localhost:11434
+        local_response = local_client.list()
+        return [model["model"] for model in local_response.get("models", [])]
+    except Exception as e:
+        print(f"Error fetching local models: {e}")
+        return []
 
 
-# In[29]:
+def get_ollama_model(model_name: str) -> ChatOllama:
+    """
+    Initializes a ChatOllama instance for the specified model.
+    """
+    return ChatOllama(model=model_name, temperature=0, callbacks=[json_tracer])
+    
 
-
+# Default models
+#DEFAULT_MODEL = "mistral-small3.2:24b"
+DEFAULT_MODEL = "glm-4.6:cloud"
+llm = get_ollama_model(DEFAULT_MODEL)
+llm_small = get_ollama_model("llama3.1:8b")
 SUBSCRIBED = {"NETFLIX", "AMAZON", "HBO", "MAX", "APPLE", "DISNEY", "HULU", "TUBI"}
 
 
@@ -202,13 +191,8 @@ ALL_FLAGS = (
     .dropna()
     .apply(lambda x: f"{x.name} ({x.flag})".upper())
 )
-
-
-# In[30]:
-
-
-def tmdb_table(results) -> pd.DataFrame:
-    """Get a table of the info of providers per country"""
+def tmdb_table(results) -> dict:
+    "Get a table of the info of providers per country"
     if results:
         sub_df = pd.DataFrame(
             {
@@ -233,7 +217,10 @@ def tmdb_table(results) -> pd.DataFrame:
                 }
             )
 
-        return json.dumps(
+        if sub_df.empty:
+            return {}
+
+        return (
             sub_df.stack()
             .explode()
             .sort_index()
@@ -244,15 +231,9 @@ def tmdb_table(results) -> pd.DataFrame:
             .pivot_table(index=["Type", "Provider"], values="Country", aggfunc=list)
             .groupby(level=0)
             .apply(lambda g: g.droplevel(0).to_dict()["Country"])
-            .to_dict(),
-            indent=4,
+            .to_dict()
         )
-    return pd.DataFrame()
-
-
-# In[39]:
-
-
+    return {}
 from typing import Optional, Dict, Any, List
 from langchain_core.tools import tool
 
@@ -358,20 +339,13 @@ def tmdb_tv_watch_providers(series_id: int) -> Dict[str, Any]:
         return tmdb_table(results)
 
     return {"message": "No watch providers found."}
-
-
-# In[41]:
-
-
-# 1. Define the tools array and bind them to the ChatOllama LLM
+# 1. Define the tools array
 tools = [
     tmdb_search_movie, 
     tmdb_watch_providers, 
     tmdb_search_tv, 
     tmdb_tv_watch_providers
 ]
-
-llm_with_tools = llm.bind_tools(tools)
 
 # 2. Define the strict system prompt
 system_prompt = SystemMessage(content=f"""
@@ -389,23 +363,25 @@ USER CONTEXT & STREAMING PREFERENCES:
 2. VPN Access (Global): The user has a VPN and can access international content. If a title is unavailable in the Netherlands, or if it is available elsewhere on their active subscriptions, you must list the other countries where it can be streamed.
 3. Active Subscriptions: Focus on 'flatrate' (subscription) availability for the platforms the user is currently subscribed to:
 {SUBSCRIBED}
+
+STYLE GUIDELINE:
+- Before calling any tool, briefly state what you are about to do in a natural way (e.g., "I'll look up Shrek for you...", "Now I'll check where it's streaming..."). This helps the user follow your progress.
 """)
 
 # 3. Create the node function for the agent
-def agent(state: MessagesState):
+def agent(state: MessagesState, config: RunnableConfig):
     # Ensure the system prompt is always injected at the start of the context window
     messages = [system_prompt] + state["messages"]
 
+    # Dynamic model selection from config
+    model_name = config.get("configurable", {}).get("model_name", DEFAULT_MODEL)
+    current_llm = get_ollama_model(model_name).bind_tools(tools)
+
     # Invoke the LLM (which is aware of the tools)
-    response = llm_with_tools.invoke(messages)
+    response = current_llm.invoke(messages)
 
     # Return the response to be appended to the state
     return {"messages": [response]}
-
-
-# In[42]:
-
-
 from langgraph.checkpoint.memory import MemorySaver
 
 # 4. Build the LangGraph Workflow
@@ -428,11 +404,6 @@ workflow.add_edge("tools", "agent")
 # 5. Compile the graph into an executable application
 memory = MemorySaver()
 agent_executor = workflow.compile(checkpointer=memory)
-
-
-# In[44]:
-
-
 def get_agent():
     return agent_executor
 

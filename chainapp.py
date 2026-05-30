@@ -6,10 +6,16 @@ from typing import Any
 import chainlit as cl
 from langchain_core.runnables import RunnableConfig
 
-from agent_v2 import get_agent, llm_small
+from agent_v2 import get_agent, llm_small, get_all_ollama_models, DEFAULT_MODEL
 
 BOT_NAME = "MovieBot"
 
+TOOL_DISPLAY_NAMES = {
+    "tmdb_search_movie": "🎬 Searching for Movie",
+    "tmdb_watch_providers": "🍿 Checking Streaming",
+    "tmdb_search_tv": "📺 Searching for TV Show",
+    "tmdb_tv_watch_providers": "🍿 Checking TV Streaming",
+}
 
 def build_streaming_actions(agent_reply: str, fallback_title: str) -> list[cl.Action]:
     actions: list[cl.Action] = []
@@ -39,19 +45,19 @@ def build_streaming_actions(agent_reply: str, fallback_title: str) -> list[cl.Ac
     return actions
     
 async def summarize_tool_output(step: cl.Step, raw_data: Any):
-    """Summarize tool output in the background using first-person narration."""
+    "Summarize tool output in the background using first-person narration."
     try:
-        step.output = "Looking at the results..."
-        await step.update()
+        # If it's too long, truncate it for the summary LLM
+        if isinstance(raw_data, str):
+            serialized = raw_data[:2000]
+        else:
+            serialized = json.dumps(raw_data, default=str)[:2000]
 
-        serialized = json.dumps(raw_data, default=str)[:1000]
-
-        # UPDATED PROMPT: Force first-person narration and forbid markdown
         prompt = (
             "You are an AI assistant narrating your internal actions to a user. "
-            "Write a single, brief sentence explaining what you just did or found based on the data below. "
+            "Write a single, very brief sentence explaining what you just did or found based on the data below. "
             "You MUST speak in the first person (e.g., 'I just searched for...', 'I found that...'). "
-            "CRITICAL: Output ONLY the sentence. Do not use any Markdown formatting, asterisks, or quotes. "
+            "Output ONLY the sentence. Do not use any Markdown formatting, asterisks, or quotes. "
             f"Result data: {serialized}"
         )
         
@@ -61,26 +67,31 @@ async def summarize_tool_output(step: cl.Step, raw_data: Any):
         if isinstance(content, list):
             content = "".join(part.get("text", "") if isinstance(part, dict) else str(part) for part in content)
         
-        # Clean up any rogue quotes or asterisks the LLM might still try to sneak in
         clean_summary = content.replace('"', '').replace('*', '').strip()
         
-        # UPDATED UI: Remove markdown styling, just plain text
-        step.input = ""  
-        step.language = "text"
+        # Update the step output with the summary
+        step.input = "" # Hide the raw input block
         step.output = clean_summary
-        
         await step.update()
         
     except Exception as e:
-        try:
-            step.output = f"Raw Data:\n{json.dumps(raw_data, indent=2, default=str)}"
-        except TypeError:
-            step.output = f"Raw Data:\n{str(raw_data)}"
+        # Silently fail or provide a generic message to keep the UI clean
+        step.output = "I've processed the results."
         await step.update()
 
 async def run_agent_prompt(user_prompt: str, button_fallback_title: str) -> None:
     graph = get_agent()
-    config = RunnableConfig(configurable={"thread_id": cl.context.session.id})
+    
+    # Get the selected model from settings
+    settings = cl.user_session.get("settings") or {}
+    model_name = settings.get("model", DEFAULT_MODEL)
+    
+    config = RunnableConfig(
+        configurable={
+            "thread_id": cl.context.session.id,
+            "model_name": model_name
+        }
+    )
     run_steps: dict[str, cl.Step] = {}
     message = cl.Message(content="", author=BOT_NAME)
 
@@ -95,17 +106,22 @@ async def run_agent_prompt(user_prompt: str, button_fallback_title: str) -> None
         data = event.get("data", {})
 
         if kind == "on_tool_start":
-            step = cl.Step(name=f"🛠️ {name}", type="tool")
-            # FIX: Do NOT set step.input here, or the UI draws the dark box. 
-            # Give it a loading message instead.
-            step.output = "Running..." 
+            display_name = TOOL_DISPLAY_NAMES.get(name, name)
+            step = cl.Step(name=display_name, type="tool")
+            
+            # Extract a helpful hint from the input
+            tool_input = data.get("input", {})
+            target = tool_input.get("title") or tool_input.get("movie_title") or tool_input.get("movie_id") or tool_input.get("series_id")
+            
+            step.output = f"Looking up '{target}'..." if target else "Searching..." 
             await step.send()
             run_steps[run_id] = step
         elif kind == "on_tool_end":
             step = run_steps.get(run_id)
-            #if step:
-                #raw_output = data.get("output")
-                #asyncio.create_task(summarize_tool_output(step, raw_output))
+            if step:
+                raw_output = data.get("output")
+                # Summarize in the background to avoid blocking the main stream
+                asyncio.create_task(summarize_tool_output(step, raw_output))
         elif kind == "on_chat_model_stream":
             chunk = data.get("chunk")
             if not chunk:
@@ -123,7 +139,8 @@ async def run_agent_prompt(user_prompt: str, button_fallback_title: str) -> None
             else:
                 chunk_text = str(chunk_content or "")
 
-            if chunk_text and not getattr(chunk, "tool_calls", None):
+            # We now allow streaming even if tool_calls are present to show the agent's "thought"
+            if chunk_text:
                 await message.stream_token(chunk_text)
 
     if message.content:
@@ -133,9 +150,37 @@ async def run_agent_prompt(user_prompt: str, button_fallback_title: str) -> None
 
 @cl.on_chat_start
 async def on_chat_start():
+    # Load available models
+    models = get_all_ollama_models()
+    
+    # Set up settings panel
+    await cl.ChatSettings(
+        [
+            cl.input_widget.Select(
+                id="model",
+                label="Ollama Model",
+                values=models if models else [DEFAULT_MODEL],
+                initial_value=DEFAULT_MODEL,
+                description="Select the Ollama model to use for the agent.",
+            )
+        ]
+    ).send()
+    
+    # Initialize settings in session
+    cl.user_session.set("settings", {"model": DEFAULT_MODEL})
+
     await cl.Message(
         content="🎬 **Movie Stream Finder Agent (v2)** is ready! Ask me about any movie.",
         author=BOT_NAME,
+    ).send()
+
+
+@cl.on_settings_update
+async def setup_agent(settings):
+    cl.user_session.set("settings", settings)
+    await cl.Message(
+        content=f"Settings updated! Using model: {settings['model']}",
+        author=BOT_NAME
     ).send()
 
 
