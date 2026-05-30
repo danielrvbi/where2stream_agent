@@ -5,6 +5,7 @@
 !agent_v2.py
 !chainapp.py
 !README.md
+!utils.py
 
 # 3. Allow the .gitignore file itself (highly recommended)
 !.gitignore
