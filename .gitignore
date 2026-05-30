@@ -1,0 +1,9 @@
+# 1. Ignore absolutely everything
+*
+
+# 2. Allow your specific files
+!agent_v2.py
+!chainapp.py
+
+# 3. Allow the .gitignore file itself (highly recommended)
+!.gitignore
