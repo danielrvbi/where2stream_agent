@@ -25,7 +25,13 @@ load_dotenv()
 TMDB_API_KEY = os.getenv("TMDB_API_KEY") or os.getenv("TMDB_key")
 TMDB_BASE = "https://api.themoviedb.org/3"
 SUBSCRIBED = {"NETFLIX", "AMAZON", "HBO", "MAX", "APPLE", "DISNEY", "HULU", "TUBI"}
-DEFAULT_MODEL = "glm-4.6:cloud"
+RETIRED_MODELS = {"glm-4.6:cloud"}
+DEFAULT_MODEL = os.getenv("MOVIE_AGENT_MODEL", "gpt-oss:20b")
+PREFERRED_MODELS = [
+    DEFAULT_MODEL,
+    "mistral-small3.2:24b",
+    "llama3.1:8b",
+]
 
 # Utility assignments
 dedent = lambda x: ded(x.strip())
@@ -112,10 +118,30 @@ def get_all_ollama_models():
     try:
         local_client = Client()
         local_response = local_client.list()
-        return [model["model"] for model in local_response.get("models", [])]
+        if hasattr(local_response, "models"):
+            models = local_response.models
+        else:
+            models = local_response.get("models", [])
+        names = []
+        for model in models:
+            if hasattr(model, "model"):
+                name = model.model
+            else:
+                name = model.get("model")
+            if name and name not in RETIRED_MODELS:
+                names.append(name)
+        return names
     except Exception as e:
         print(f"Error fetching local models: {e}")
         return []
+
+def get_default_model(models: Optional[List[str]] = None) -> str:
+    """Pick the first preferred model that is actually available."""
+    available = models if models is not None else get_all_ollama_models()
+    for model in PREFERRED_MODELS:
+        if model in available and model not in RETIRED_MODELS:
+            return model
+    return available[0] if available else DEFAULT_MODEL
 
 def get_ollama_model(model_name: str) -> ChatOllama:
     """Initializes a ChatOllama instance for the specified model."""
