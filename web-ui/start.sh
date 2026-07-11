@@ -18,16 +18,33 @@ fi
 # Check if Python dependencies are installed
 if ! python3 -c "import fastapi" 2>/dev/null; then
     echo "Installing Python dependencies..."
-    pip install fastapi uvicorn python-multipart
+    pip install -r requirements.txt
+fi
+
+# Check if TMDB_API_KEY is set
+if [ -z "$TMDB_API_KEY" ]; then
+    echo "Warning: TMDB_API_KEY not found in environment"
+    echo "Please set it in your .env file or export it:"
+    echo "export TMDB_API_KEY=your_api_key_here"
 fi
 
 # Start the API server in the background
 echo "Starting API server on port 8000..."
-python3 server.py &
+python3 server_simple.py &
 API_PID=$!
 
 # Wait a bit for the server to start
-sleep 2
+sleep 3
+
+# Check if server started successfully
+if ! curl -s http://localhost:8000/ > /dev/null; then
+    echo "Error: API server failed to start"
+    echo "Check if port 8000 is available and TMDB_API_KEY is set"
+    kill $API_PID 2>/dev/null
+    exit 1
+fi
+
+echo "API server is running!"
 
 # Start the Vite dev server
 echo "Starting Vite dev server on port 3000..."
