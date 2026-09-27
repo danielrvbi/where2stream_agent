@@ -1,0 +1,568 @@
+[
+    {
+        "run_id": "019ddb1f-e44b-7481-8236-e35cc0cdca3c",
+        "model_info": "gpt-oss:20b",
+        "start_time": "2026-04-29T21:23:13.611720Z",
+        "status": "completed",
+        "input_messages": [
+            {
+                "role": "human",
+                "content": "where do I stream shrek 2"
+            },
+            {
+                "role": "ai",
+                "content": "\ud83d\udd0d **Step 1: Parse Movie Query**\n\nInput: \"where do I stream shrek 2\"\n\nExtracting title, year, and director..."
+            },
+            {
+                "role": "ai",
+                "content": "\u2705 **Parsed Result:**\n- Title: Shrek 2\n- Year: Not specified\n- Director: Not specified"
+            },
+            {
+                "role": "ai",
+                "content": "\ud83c\udfac **Step 2: Search & Choose Movie**\n\nSearching TMDB for: Shrek 2..."
+            },
+            {
+                "role": "ai",
+                "content": "\ud83d\udccb **Found 1 candidates:**\n- Shrek 2 (2004) - ID: 809\n\nSelecting best match..."
+            },
+            {
+                "role": "ai",
+                "content": "\u2705 **Selected:** Shrek 2 (2004)\n\n\ud83c\udf10 Fetching streaming providers..."
+            },
+            {
+                "role": "ai",
+                "content": "\ud83d\udcfa **Providers found!**"
+            },
+            {
+                "role": "system",
+                "content": "You produce the final user-facing answer for an AI system that searches in which services and which countries to stream the movie asked.\n    ## Context\n    - The given data is already filtering the subscription the user has\n    - The user location is the Netherlands, so that is the only Non-VPN option that exists\n\n    ## Constraints:\n    - It doesn't matter what is the user's country. They will use a VPN\n    - Mention ALL countries where the movie is available\n    - Mention all available options to see the movie (only if info is available)\n    - If nothing is available anywhere, say so.\n    - Do not invent providers or countries not in the input."
+            }
+        ],
+        "end_time": "2026-04-29T21:23:20.495328Z",
+        "output_messages": [
+            {
+                "role": "ai",
+                "content": "I\u2019m sorry, but I couldn\u2019t find any streaming options for **Shrek\u202f2** in any country."
+            }
+        ],
+        "token_usage": {
+            "prompt_tokens": 360,
+            "completion_tokens": 374
+        }
+    },
+    {
+        "run_id": "019ddb20-f18b-7b73-8d7b-9af6944e14fe",
+        "model_info": "gpt-oss:20b",
+        "start_time": "2026-04-29T21:24:22.539534Z",
+        "status": "completed",
+        "input_messages": [
+            {
+                "role": "system",
+                "content": "You must extract 'title', 'year', and 'director' from the user query.\n    - If year is not explicitly mentioned, return year = null.\n    - If director is not explicitly mentioned, return director = null.\n    - No extra text, no explanations.\n    Example outputs:\n      {\"title\": \"Inception\", \"year\": 2010, \"director\": \"Christopher Nolan\"}\n      {\"title\": \"Titanic\", \"year\": null, \"director\": null}"
+            },
+            {
+                "role": "human",
+                "content": "where do I stream shrek 2 (2004)"
+            }
+        ],
+        "end_time": "2026-04-29T21:24:24.403929Z",
+        "output_messages": [
+            {
+                "role": "ai",
+                "content": "{\"title\":\"Shrek 2\",\"year\":2004,\"director\":null}"
+            }
+        ],
+        "token_usage": {
+            "prompt_tokens": 248,
+            "completion_tokens": 18
+        }
+    },
+    {
+        "run_id": "019ddb20-fbf4-7c90-bace-a43222a8752d",
+        "model_info": "gpt-oss:20b",
+        "start_time": "2026-04-29T21:24:25.204872Z",
+        "status": "completed",
+        "input_messages": [
+            {
+                "role": "system",
+                "content": "You are selecting exactly ONE movie from the provided candidates.\n        Rules:\n        - Return a JSON object that matches the schema.\n        - 'movie_id' MUST be one of the candidate IDs shown. If no candidate fits, set id = null.\n        - No prose beyond fields in the schema."
+            },
+            {
+                "role": "human",
+                "content": "User query: \u2705 **Parsed Result:**\n- Title: Shrek 2\n- Year: 2004\n- Director: Not specified\n\n    Candidates (JSON list):\n    [{'id': 809, 'title': 'Shrek 2', 'original_language': 'en', 'release_year': '2004', 'overview': 'Happily ever after never seemed so far far away when a trip to meet the in-laws turns into a hilariously twisted adventure for Shrek and Fiona. With the help of his faithful Donkey, Shrek takes on a potion-brewing Fairy Godmother, the pompous Prince Charming, and the ogre-killer, Puss In Boots.'}]"
+            }
+        ],
+        "end_time": "2026-04-29T21:24:26.984958Z",
+        "output_messages": [
+            {
+                "role": "ai",
+                "content": "{\"movie_id\": 809}"
+            }
+        ],
+        "token_usage": {
+            "prompt_tokens": 341,
+            "completion_tokens": 8
+        }
+    },
+    {
+        "run_id": "019ddb21-0509-7283-bb63-3cae1d28ed64",
+        "model_info": "gpt-oss:20b",
+        "start_time": "2026-04-29T21:24:27.529183Z",
+        "status": "completed",
+        "input_messages": [
+            {
+                "role": "human",
+                "content": "where do I stream shrek 2"
+            },
+            {
+                "role": "ai",
+                "content": "\ud83d\udd0d **Step 1: Parse Movie Query**\n\nInput: \"where do I stream shrek 2\"\n\nExtracting title, year, and director..."
+            },
+            {
+                "role": "ai",
+                "content": "\u2705 **Parsed Result:**\n- Title: Shrek 2\n- Year: Not specified\n- Director: Not specified"
+            },
+            {
+                "role": "ai",
+                "content": "\ud83c\udfac **Step 2: Search & Choose Movie**\n\nSearching TMDB for: Shrek 2..."
+            },
+            {
+                "role": "ai",
+                "content": "\ud83d\udccb **Found 1 candidates:**\n- Shrek 2 (2004) - ID: 809\n\nSelecting best match..."
+            },
+            {
+                "role": "ai",
+                "content": "\u2705 **Selected:** Shrek 2 (2004)\n\n\ud83c\udf10 Fetching streaming providers..."
+            },
+            {
+                "role": "ai",
+                "content": "\ud83d\udcfa **Providers found!**"
+            },
+            {
+                "role": "ai",
+                "content": "\ud83d\udcdd **Step 3: Generate Final Response**\n\nCompiling streaming information for 'Shrek 2'..."
+            },
+            {
+                "role": "ai",
+                "content": "I\u2019m sorry, but I couldn\u2019t find any streaming options for **Shrek\u202f2** in any country."
+            },
+            {
+                "role": "human",
+                "content": "where do I stream shrek 2 (2004)"
+            },
+            {
+                "role": "ai",
+                "content": "\ud83d\udd0d **Step 1: Parse Movie Query**\n\nInput: \"where do I stream shrek 2 (2004)\"\n\nExtracting title, year, and director..."
+            },
+            {
+                "role": "ai",
+                "content": "\u2705 **Parsed Result:**\n- Title: Shrek 2\n- Year: 2004\n- Director: Not specified"
+            },
+            {
+                "role": "ai",
+                "content": "\ud83c\udfac **Step 2: Search & Choose Movie**\n\nSearching TMDB for: Shrek 2..."
+            },
+            {
+                "role": "ai",
+                "content": "\ud83d\udccb **Found 1 candidates:**\n- Shrek 2 (2004) - ID: 809\n\nSelecting best match..."
+            },
+            {
+                "role": "ai",
+                "content": "\u2705 **Selected:** Shrek 2 (2004)\n\n\ud83c\udf10 Fetching streaming providers..."
+            },
+            {
+                "role": "ai",
+                "content": "\ud83d\udcfa **Providers found!**"
+            },
+            {
+                "role": "system",
+                "content": "You produce the final user-facing answer for an AI system that searches in which services and which countries to stream the movie asked.\n    ## Context\n    - The given data is already filtering the subscription the user has\n    - The user location is the Netherlands, so that is the only Non-VPN option that exists\n\n    ## Constraints:\n    - It doesn't matter what is the user's country. They will use a VPN\n    - Mention ALL countries where the movie is available\n    - Mention all available options to see the movie (only if info is available)\n    - If nothing is available anywhere, say so.\n    - Do not invent providers or countries not in the input."
+            }
+        ],
+        "end_time": "2026-04-29T21:24:34.780226Z",
+        "output_messages": [
+            {
+                "role": "ai",
+                "content": "I\u2019m sorry, but I couldn\u2019t find any streaming options for **Shrek\u202f2 (2004)** in any country."
+            }
+        ],
+        "token_usage": {
+            "prompt_tokens": 566,
+            "completion_tokens": 388
+        }
+    },
+    {
+        "run_id": "019ddb23-07a5-70f3-b478-b3a0d4de6cba",
+        "model_info": "gpt-oss:20b",
+        "start_time": "2026-04-29T21:26:39.269098Z",
+        "status": "completed",
+        "input_messages": [
+            {
+                "role": "system",
+                "content": "You must extract 'title', 'year', and 'director' from the user query.\n    - If year is not explicitly mentioned, return year = null.\n    - If director is not explicitly mentioned, return director = null.\n    - No extra text, no explanations.\n    Example outputs:\n      {\"title\": \"Inception\", \"year\": 2010, \"director\": \"Christopher Nolan\"}\n      {\"title\": \"Titanic\", \"year\": null, \"director\": null}"
+            },
+            {
+                "role": "human",
+                "content": "where do I stream shrek 2"
+            }
+        ],
+        "end_time": "2026-04-29T21:26:41.044952Z",
+        "output_messages": [
+            {
+                "role": "ai",
+                "content": "{\"title\":\"Shrek 2\",\"year\":null,\"director\":null}"
+            }
+        ],
+        "token_usage": {
+            "prompt_tokens": 242,
+            "completion_tokens": 17
+        }
+    },
+    {
+        "run_id": "019ddb23-1152-7ac3-bb76-5bc40b7903f6",
+        "model_info": "gpt-oss:20b",
+        "start_time": "2026-04-29T21:26:41.746954Z",
+        "status": "completed",
+        "input_messages": [
+            {
+                "role": "system",
+                "content": "You are selecting exactly ONE movie from the provided candidates.\n        Rules:\n        - Return a JSON object that matches the schema.\n        - 'movie_id' MUST be one of the candidate IDs shown. If no candidate fits, set id = null.\n        - No prose beyond fields in the schema."
+            },
+            {
+                "role": "human",
+                "content": "User query: \u2705 **Parsed Result:**\n- Title: Shrek 2\n- Year: Not specified\n- Director: Not specified\n\n    Candidates (JSON list):\n    [{'id': 809, 'title': 'Shrek 2', 'original_language': 'en', 'release_year': '2004', 'overview': 'Happily ever after never seemed so far far away when a trip to meet the in-laws turns into a hilariously twisted adventure for Shrek and Fiona. With the help of his faithful Donkey, Shrek takes on a potion-brewing Fairy Godmother, the pompous Prince Charming, and the ogre-killer, Puss In Boots.'}]"
+            }
+        ],
+        "end_time": "2026-04-29T21:26:43.388472Z",
+        "output_messages": [
+            {
+                "role": "ai",
+                "content": "{\"movie_id\": 809}"
+            }
+        ],
+        "token_usage": {
+            "prompt_tokens": 332,
+            "completion_tokens": 8
+        }
+    },
+    {
+        "run_id": "019ddb23-19e7-7d03-93ab-d4f9ab41ab25",
+        "model_info": "gpt-oss:20b",
+        "start_time": "2026-04-29T21:26:43.943151Z",
+        "status": "completed",
+        "input_messages": [
+            {
+                "role": "human",
+                "content": "where do I stream shrek 2"
+            },
+            {
+                "role": "ai",
+                "content": "\ud83d\udd0d **Step 1: Parse Movie Query**\n\nInput: \"where do I stream shrek 2\"\n\nExtracting title, year, and director..."
+            },
+            {
+                "role": "ai",
+                "content": "\u2705 **Parsed Result:**\n- Title: Shrek 2\n- Year: Not specified\n- Director: Not specified"
+            },
+            {
+                "role": "ai",
+                "content": "\ud83c\udfac **Step 2: Search & Choose Movie**\n\nSearching TMDB for: Shrek 2..."
+            },
+            {
+                "role": "ai",
+                "content": "\ud83d\udccb **Found 1 candidates:**\n- Shrek 2 (2004) - ID: 809\n\nSelecting best match..."
+            },
+            {
+                "role": "ai",
+                "content": "\u2705 **Selected:** Shrek 2 (2004)\n\n\ud83c\udf10 Fetching streaming providers..."
+            },
+            {
+                "role": "ai",
+                "content": "\ud83d\udcfa **Providers found!**"
+            },
+            {
+                "role": "system",
+                "content": "You produce the final user-facing answer for an AI system that searches in which services and which countries to stream the movie asked.\n    ## Context\n    - The given data is already filtering the subscription the user has\n    - The user location is the Netherlands, so that is the only Non-VPN option that exists\n\n    ## Data (Streaming Providers):\n    {\n    \"flatrate\": {\n        \"AMAZON PRIME VIDEO\": [\n            \"Algeria\",\n            \"Andorra\",\n            \"Angola\",\n            \"Antigua And Barbuda\",\n            \"Argentina\",\n            \"Australia\",\n            \"Bahamas\",\n            \"Bahrain\",\n            \"Barbados\",\n            \"Belgium\",\n            \"Belize\",\n            \"Bermuda\",\n            \"Bolivia, Plurinational State Of\",\n            \"Brazil\",\n            \"Burkina Faso\",\n            \"Cabo Verde\",\n            \"Cameroon\",\n            \"Canada\",\n            \"Chad\",\n            \"Chile\",\n            \"Colombia\",\n            \"Congo, The Democratic Republic Of The\",\n            \"Costa Rica\",\n            \"C\\u00f4te D'Ivoire\",\n            \"Denmark\",\n            \"Dominican Republic\",\n            \"Ecuador\",\n            \"Egypt\",\n            \"El Salvador\",\n            \"Equatorial Guinea\",\n            \"Fiji\",\n            \"Finland\",\n            \"France\",\n            \"French Guiana\",\n            \"French Polynesia\",\n            \"Ghana\",\n            \"Gibraltar\",\n            \"Guatemala\",\n            \"Guernsey\",\n            \"Guyana\",\n            \"Honduras\",\n            \"Hong Kong\",\n            \"Iceland\",\n            \"India\",\n            \"Indonesia\",\n            \"Iraq\",\n            \"Ireland\",\n            \"Israel\",\n            \"Italy\",\n            \"Jamaica\",\n            \"Japan\",\n            \"Jordan\",\n            \"Kenya\",\n            \"Korea, Republic Of\",\n            \"Kuwait\",\n            \"Lebanon\",\n            \"Libya\",\n            \"Luxembourg\",\n            \"Madagascar\",\n            \"Malawi\",\n            \"Malaysia\",\n            \"Mali\",\n            \"Mexico\",\n            \"Monaco\",\n            \"Morocco\",\n            \"Mozambique\",\n            \"Netherlands\",\n            \"New Zealand\",\n            \"Nicaragua\",\n            \"Niger\",\n            \"Nigeria\",\n            \"Norway\",\n            \"Oman\",\n            \"Palestine, State Of\",\n            \"Panama\",\n            \"Papua New Guinea\",\n            \"Paraguay\",\n            \"Peru\",\n            \"Philippines\",\n            \"Poland\",\n            \"Portugal\",\n            \"Qatar\",\n            \"Saint Lucia\",\n            \"Saudi Arabia\",\n            \"Senegal\",\n            \"Seychelles\",\n            \"Singapore\",\n            \"South Africa\",\n            \"Spain\",\n            \"Sweden\",\n            \"Switzerland\",\n            \"Taiwan, Province Of China\",\n            \"Tanzania, United Republic Of\",\n            \"Thailand\",\n            \"Trinidad And Tobago\",\n            \"Tunisia\",\n            \"Turks And Caicos Islands\",\n            \"T\\u00fcrkiye\",\n            \"Uganda\",\n            \"United Arab Emirates\",\n            \"United Kingdom\",\n            \"Uruguay\",\n            \"Venezuela, Bolivarian Republic Of\",\n            \"Yemen\",\n            \"Zambia\",\n            \"Zimbabwe\"\n        ],\n        \"AMAZON PRIME VIDEO WITH ADS\": [\n            \"Australia\",\n            \"Brazil\",\n            \"Canada\",\n            \"France\",\n            \"India\",\n            \"Italy\",\n            \"Japan\",\n            \"Mexico\",\n            \"Spain\",\n            \"United Kingdom\"\n        ],\n        \"CRAVE AMAZON CHANNEL\": [\n            \"Canada\"\n        ],\n        \"DISNEY PLUS\": [\n            \"Albania\",\n            \"Andorra\",\n            \"Australia\",\n            \"Austria\",\n            \"Belgium\",\n            \"Bosnia And Herzegovina\",\n            \"Bulgaria\",\n            \"Canada\",\n            \"Croatia\",\n            \"Czechia\",\n            \"Denmark\",\n            \"Estonia\",\n            \"Finland\",\n            \"Greece\",\n            \"Hungary\",\n            \"Iceland\",\n            \"Ireland\",\n            \"Italy\",\n            \"Latvia\",\n            \"Liechtenstein\",\n            \"Lithuania\",\n            \"Luxembourg\",\n            \"Malta\",\n            \"Montenegro\",\n            \"Netherlands\",\n            \"New Zealand\",\n            \"North Macedonia\",\n            \"Norway\",\n            \"Poland\",\n            \"Portugal\",\n            \"Romania\",\n            \"San Marino\",\n            \"Serbia\",\n            \"Slovakia\",\n            \"Slovenia\",\n            \"Sweden\",\n            \"Switzerland\",\n            \"T\\u00fcrkiye\",\n            \"United Kingdom\"\n        ],\n        \"HBO MAX\": [\n            \"Antigua And Barbuda\",\n            \"Argentina\",\n            \"Bahamas\",\n            \"Barbados\",\n            \"Belize\",\n            \"Bolivia, Plurinational State Of\",\n            \"Brazil\",\n            \"Chile\",\n            \"Colombia\",\n            \"Costa Rica\",\n            \"Dominican Republic\",\n            \"Ecuador\",\n            \"El Salvador\",\n            \"Guatemala\",\n            \"Guyana\",\n            \"Honduras\",\n            \"Jamaica\",\n            \"Mexico\",\n            \"Nicaragua\",\n            \"Panama\",\n            \"Paraguay\",\n            \"Peru\",\n            \"Saint Lucia\",\n            \"Trinidad And Tobago\",\n            \"Turks And Caicos Islands\",\n            \"Uruguay\",\n            \"Venezuela, Bolivarian Republic Of\"\n        ],\n        \"HBO MAX AMAZON CHANNEL\": [\n            \"Brazil\",\n            \"Colombia\",\n            \"Mexico\"\n        ],\n        \"HULU\": [\n            \"United States\"\n        ],\n        \"NETFLIX\": [\n            \"Albania\",\n            \"Algeria\",\n            \"Andorra\",\n            \"Angola\",\n            \"Antigua And Barbuda\",\n            \"Argentina\",\n            \"Australia\",\n            \"Austria\",\n            \"Azerbaijan\",\n            \"Bahamas\",\n            \"Bahrain\",\n            \"Barbados\",\n            \"Belarus\",\n            \"Belgium\",\n            \"Belize\",\n            \"Bermuda\",\n            \"Bolivia, Plurinational State Of\",\n            \"Bosnia And Herzegovina\",\n            \"Brazil\",\n            \"Bulgaria\",\n            \"Cabo Verde\",\n            \"Cameroon\",\n            \"Canada\",\n            \"Chad\",\n            \"Chile\",\n            \"Colombia\",\n            \"Costa Rica\",\n            \"Croatia\",\n            \"Cuba\",\n            \"Cyprus\",\n            \"Czechia\",\n            \"C\\u00f4te D'Ivoire\",\n            \"Denmark\",\n            \"Dominican Republic\",\n            \"Ecuador\",\n            \"Egypt\",\n            \"El Salvador\",\n            \"Equatorial Guinea\",\n            \"Estonia\",\n            \"Fiji\",\n            \"Finland\",\n            \"France\",\n            \"French Guiana\",\n            \"French Polynesia\",\n            \"Germany\",\n            \"Ghana\",\n            \"Greece\",\n            \"Guatemala\",\n            \"Honduras\",\n            \"Hong Kong\",\n            \"Hungary\",\n            \"Iceland\",\n            \"India\",\n            \"Indonesia\",\n            \"Iraq\",\n            \"Israel\",\n            \"Italy\",\n            \"Jamaica\",\n            \"Japan\",\n            \"Jordan\",\n            \"Kenya\",\n            \"Korea, Republic Of\",\n            \"Kuwait\",\n            \"Latvia\",\n            \"Lebanon\",\n            \"Libya\",\n            \"Liechtenstein\",\n            \"Lithuania\",\n            \"Luxembourg\",\n            \"Madagascar\",\n            \"Malaysia\",\n            \"Mali\",\n            \"Malta\",\n            \"Mauritius\",\n            \"Mexico\",\n            \"Moldova, Republic Of\",\n            \"Monaco\",\n            \"Montenegro\",\n            \"Morocco\",\n            \"Mozambique\",\n            \"Netherlands\",\n            \"New Zealand\",\n            \"Nicaragua\",\n            \"Niger\",\n            \"Nigeria\",\n            \"North Macedonia\",\n            \"Norway\",\n            \"Oman\",\n            \"Pakistan\",\n            \"Palestine, State Of\",\n            \"Panama\",\n            \"Paraguay\",\n            \"Peru\",\n            \"Philippines\",\n            \"Poland\",\n            \"Portugal\",\n            \"Qatar\",\n            \"Romania\",\n            \"Saint Lucia\",\n            \"San Marino\",\n            \"Saudi Arabia\",\n            \"Senegal\",\n            \"Serbia\",\n            \"Seychelles\",\n            \"Singapore\",\n            \"Slovakia\",\n            \"Slovenia\",\n            \"South Africa\",\n            \"Spain\",\n            \"Sweden\",\n            \"Switzerland\",\n            \"Taiwan, Province Of China\",\n            \"Tanzania, United Republic Of\",\n            \"Thailand\",\n            \"Trinidad And Tobago\",\n            \"Tunisia\",\n            \"Turks And Caicos Islands\",\n            \"T\\u00fcrkiye\",\n            \"Uganda\",\n            \"Ukraine\",\n            \"United Arab Emirates\",\n            \"Uruguay\",\n            \"Venezuela, Bolivarian Republic Of\",\n            \"Yemen\",\n            \"Zambia\",\n            \"Zimbabwe\"\n        ],\n        \"NETFLIX KIDS\": [\n            \"Germany\",\n            \"Netherlands\",\n            \"South Africa\"\n        ],\n        \"RTL+ MAX AMAZON CHANNEL\": [\n            \"Germany\"\n        ],\n        \"STARZ AMAZON CHANNEL\": [\n            \"Canada\"\n        ],\n        \"TELECINE AMAZON CHANNEL\": [\n            \"Brazil\"\n        ],\n        \"UNIVERSAL+ AMAZON CHANNEL\": [\n            \"Brazil\",\n            \"Chile\",\n            \"Colombia\",\n            \"Mexico\"\n        ]\n    }\n}\n\n    ## Constraints:\n    - It doesn't matter what is the user's country. They will use a VPN\n    - Mention ALL countries where the movie is available\n    - Mention all available options to see the movie (only if info is available)\n    - If nothing is available anywhere, say so.\n    - Do not invent providers or countries not in the input."
+            }
+        ],
+        "end_time": "2026-04-29T21:26:54.779045Z",
+        "output_messages": [
+            {
+                "role": "ai",
+                "content": "I\u2019m sorry, but I don\u2019t have any information that \u201cShrek\u202f2\u201d is available on any of the streaming services listed in the data you provided. If you\u2019d like, I can try to look it up on a different source or help you find another way to watch it."
+            }
+        ],
+        "token_usage": {
+            "prompt_tokens": 2257,
+            "completion_tokens": 487
+        }
+    },
+    {
+        "run_id": "019ddd5f-1815-7542-9276-edcacd9b5061",
+        "model_info": "gpt-oss:20b",
+        "start_time": "2026-04-30T07:51:30.069649Z",
+        "status": "completed",
+        "input_messages": [
+            {
+                "role": "system",
+                "content": "You must extract 'title', 'year', and 'director' from the user query.\n    - If year is not explicitly mentioned, return year = null.\n    - If director is not explicitly mentioned, return director = null.\n    - No extra text, no explanations.\n    Example outputs:\n      {\"title\": \"Inception\", \"year\": 2010, \"director\": \"Christopher Nolan\"}\n      {\"title\": \"Titanic\", \"year\": null, \"director\": null}"
+            },
+            {
+                "role": "human",
+                "content": "Where to stream Shrek 2"
+            }
+        ],
+        "end_time": "2026-04-30T07:51:36.419870Z",
+        "output_messages": [
+            {
+                "role": "ai",
+                "content": "{\"title\": \"Shrek 2\", \"year\": null, \"director\": null}"
+            }
+        ],
+        "token_usage": {
+            "prompt_tokens": 240,
+            "completion_tokens": 20
+        }
+    },
+    {
+        "run_id": "019ddd5f-33df-7d73-bca3-9d7fb8d58215",
+        "model_info": "gpt-oss:20b",
+        "start_time": "2026-04-30T07:51:37.183464Z",
+        "status": "completed",
+        "input_messages": [
+            {
+                "role": "system",
+                "content": "You are selecting exactly ONE movie from the provided candidates.\n        Rules:\n        - Return a JSON object that matches the schema.\n        - 'movie_id' MUST be one of the candidate IDs shown. If no candidate fits, set id = null.\n        - No prose beyond fields in the schema."
+            },
+            {
+                "role": "human",
+                "content": "User query: \u2705 **Parsed Result:**\n- Title: Shrek 2\n- Year: Not specified\n- Director: Not specified\n\n    Candidates (JSON list):\n    [{'id': 809, 'title': 'Shrek 2', 'original_language': 'en', 'release_year': '2004', 'overview': 'Happily ever after never seemed so far far away when a trip to meet the in-laws turns into a hilariously twisted adventure for Shrek and Fiona. With the help of his faithful Donkey, Shrek takes on a potion-brewing Fairy Godmother, the pompous Prince Charming, and the ogre-killer, Puss In Boots.'}]"
+            }
+        ],
+        "end_time": "2026-04-30T07:51:38.852403Z",
+        "output_messages": [
+            {
+                "role": "ai",
+                "content": "{\"movie_id\": 809}"
+            }
+        ],
+        "token_usage": {
+            "prompt_tokens": 332,
+            "completion_tokens": 8
+        }
+    },
+    {
+        "run_id": "019ddd5f-3d08-7ea0-b81f-8ae2f6407ce1",
+        "model_info": "gpt-oss:20b",
+        "start_time": "2026-04-30T07:51:39.528381Z",
+        "status": "completed",
+        "input_messages": [
+            {
+                "role": "human",
+                "content": "Where to stream Shrek 2"
+            },
+            {
+                "role": "ai",
+                "content": "\ud83d\udd0d **Step 1: Parse Movie Query**\n\nInput: \"Where to stream Shrek 2\"\n\nExtracting title, year, and director..."
+            },
+            {
+                "role": "ai",
+                "content": "\u2705 **Parsed Result:**\n- Title: Shrek 2\n- Year: Not specified\n- Director: Not specified"
+            },
+            {
+                "role": "ai",
+                "content": "\ud83c\udfac **Step 2: Search & Choose Movie**\n\nSearching TMDB for: Shrek 2..."
+            },
+            {
+                "role": "ai",
+                "content": "\ud83d\udccb **Found 1 candidates:**\n- Shrek 2 (2004) - ID: 809\n\nSelecting best match..."
+            },
+            {
+                "role": "ai",
+                "content": "\u2705 **Selected:** Shrek 2 (2004)\n\n\ud83c\udf10 Fetching streaming providers..."
+            },
+            {
+                "role": "ai",
+                "content": "\ud83d\udcfa **Providers found!**"
+            },
+            {
+                "role": "system",
+                "content": "You produce the final user-facing answer for an AI system that searches in which services and which countries to stream the movie asked.\n    ## Context\n    - The given data is already filtering the subscription the user has\n    - The user location is the Netherlands, so that is the only Non-VPN option that exists\n\n    ## Data (Streaming Providers):\n    {\n    \"flatrate\": {\n        \"AMAZON PRIME VIDEO\": [\n            \"Algeria\",\n            \"Andorra\",\n            \"Angola\",\n            \"Antigua And Barbuda\",\n            \"Argentina\",\n            \"Australia\",\n            \"Bahamas\",\n            \"Bahrain\",\n            \"Barbados\",\n            \"Belgium\",\n            \"Belize\",\n            \"Bermuda\",\n            \"Bolivia, Plurinational State Of\",\n            \"Brazil\",\n            \"Burkina Faso\",\n            \"Cabo Verde\",\n            \"Cameroon\",\n            \"Canada\",\n            \"Chad\",\n            \"Chile\",\n            \"Colombia\",\n            \"Congo, The Democratic Republic Of The\",\n            \"Costa Rica\",\n            \"C\\u00f4te D'Ivoire\",\n            \"Denmark\",\n            \"Dominican Republic\",\n            \"Ecuador\",\n            \"Egypt\",\n            \"El Salvador\",\n            \"Equatorial Guinea\",\n            \"Fiji\",\n            \"Finland\",\n            \"France\",\n            \"French Guiana\",\n            \"French Polynesia\",\n            \"Ghana\",\n            \"Gibraltar\",\n            \"Guatemala\",\n            \"Guernsey\",\n            \"Guyana\",\n            \"Honduras\",\n            \"Hong Kong\",\n            \"Iceland\",\n            \"India\",\n            \"Indonesia\",\n            \"Iraq\",\n            \"Ireland\",\n            \"Israel\",\n            \"Italy\",\n            \"Jamaica\",\n            \"Japan\",\n            \"Jordan\",\n            \"Kenya\",\n            \"Korea, Republic Of\",\n            \"Kuwait\",\n            \"Lebanon\",\n            \"Libya\",\n            \"Luxembourg\",\n            \"Madagascar\",\n            \"Malawi\",\n            \"Malaysia\",\n            \"Mali\",\n            \"Mexico\",\n            \"Monaco\",\n            \"Morocco\",\n            \"Mozambique\",\n            \"Netherlands\",\n            \"New Zealand\",\n            \"Nicaragua\",\n            \"Niger\",\n            \"Nigeria\",\n            \"Norway\",\n            \"Oman\",\n            \"Palestine, State Of\",\n            \"Panama\",\n            \"Papua New Guinea\",\n            \"Paraguay\",\n            \"Peru\",\n            \"Philippines\",\n            \"Poland\",\n            \"Portugal\",\n            \"Qatar\",\n            \"Saint Lucia\",\n            \"Saudi Arabia\",\n            \"Senegal\",\n            \"Seychelles\",\n            \"Singapore\",\n            \"South Africa\",\n            \"Spain\",\n            \"Sweden\",\n            \"Switzerland\",\n            \"Taiwan, Province Of China\",\n            \"Tanzania, United Republic Of\",\n            \"Thailand\",\n            \"Trinidad And Tobago\",\n            \"Tunisia\",\n            \"Turks And Caicos Islands\",\n            \"T\\u00fcrkiye\",\n            \"Uganda\",\n            \"United Arab Emirates\",\n            \"United Kingdom\",\n            \"Uruguay\",\n            \"Venezuela, Bolivarian Republic Of\",\n            \"Yemen\",\n            \"Zambia\",\n            \"Zimbabwe\"\n        ],\n        \"AMAZON PRIME VIDEO WITH ADS\": [\n            \"Australia\",\n            \"Brazil\",\n            \"Canada\",\n            \"France\",\n            \"India\",\n            \"Italy\",\n            \"Japan\",\n            \"Mexico\",\n            \"Spain\",\n            \"United Kingdom\"\n        ],\n        \"CRAVE AMAZON CHANNEL\": [\n            \"Canada\"\n        ],\n        \"DISNEY PLUS\": [\n            \"Albania\",\n            \"Andorra\",\n            \"Australia\",\n            \"Austria\",\n            \"Belgium\",\n            \"Bosnia And Herzegovina\",\n            \"Bulgaria\",\n            \"Canada\",\n            \"Croatia\",\n            \"Czechia\",\n            \"Denmark\",\n            \"Estonia\",\n            \"Finland\",\n            \"Greece\",\n            \"Hungary\",\n            \"Iceland\",\n            \"Ireland\",\n            \"Italy\",\n            \"Latvia\",\n            \"Liechtenstein\",\n            \"Lithuania\",\n            \"Luxembourg\",\n            \"Malta\",\n            \"Montenegro\",\n            \"Netherlands\",\n            \"New Zealand\",\n            \"North Macedonia\",\n            \"Norway\",\n            \"Poland\",\n            \"Portugal\",\n            \"Romania\",\n            \"San Marino\",\n            \"Serbia\",\n            \"Slovakia\",\n            \"Slovenia\",\n            \"Sweden\",\n            \"Switzerland\",\n            \"T\\u00fcrkiye\",\n            \"United Kingdom\"\n        ],\n        \"HBO MAX\": [\n            \"Antigua And Barbuda\",\n            \"Argentina\",\n            \"Bahamas\",\n            \"Barbados\",\n            \"Belize\",\n            \"Bolivia, Plurinational State Of\",\n            \"Brazil\",\n            \"Chile\",\n            \"Colombia\",\n            \"Costa Rica\",\n            \"Dominican Republic\",\n            \"Ecuador\",\n            \"El Salvador\",\n            \"Guatemala\",\n            \"Guyana\",\n            \"Honduras\",\n            \"Jamaica\",\n            \"Mexico\",\n            \"Nicaragua\",\n            \"Panama\",\n            \"Paraguay\",\n            \"Peru\",\n            \"Saint Lucia\",\n            \"Trinidad And Tobago\",\n            \"Turks And Caicos Islands\",\n            \"Uruguay\",\n            \"Venezuela, Bolivarian Republic Of\"\n        ],\n        \"HBO MAX AMAZON CHANNEL\": [\n            \"Brazil\",\n            \"Colombia\",\n            \"Mexico\"\n        ],\n        \"HULU\": [\n            \"United States\"\n        ],\n        \"NETFLIX\": [\n            \"Albania\",\n            \"Algeria\",\n            \"Andorra\",\n            \"Angola\",\n            \"Antigua And Barbuda\",\n            \"Argentina\",\n            \"Australia\",\n            \"Austria\",\n            \"Azerbaijan\",\n            \"Bahamas\",\n            \"Bahrain\",\n            \"Barbados\",\n            \"Belarus\",\n            \"Belgium\",\n            \"Belize\",\n            \"Bermuda\",\n            \"Bolivia, Plurinational State Of\",\n            \"Bosnia And Herzegovina\",\n            \"Brazil\",\n            \"Bulgaria\",\n            \"Cabo Verde\",\n            \"Cameroon\",\n            \"Canada\",\n            \"Chad\",\n            \"Chile\",\n            \"Colombia\",\n            \"Costa Rica\",\n            \"Croatia\",\n            \"Cuba\",\n            \"Cyprus\",\n            \"Czechia\",\n            \"C\\u00f4te D'Ivoire\",\n            \"Denmark\",\n            \"Dominican Republic\",\n            \"Ecuador\",\n            \"Egypt\",\n            \"El Salvador\",\n            \"Equatorial Guinea\",\n            \"Estonia\",\n            \"Fiji\",\n            \"Finland\",\n            \"France\",\n            \"French Guiana\",\n            \"French Polynesia\",\n            \"Germany\",\n            \"Ghana\",\n            \"Greece\",\n            \"Guatemala\",\n            \"Honduras\",\n            \"Hong Kong\",\n            \"Hungary\",\n            \"Iceland\",\n            \"India\",\n            \"Indonesia\",\n            \"Iraq\",\n            \"Israel\",\n            \"Italy\",\n            \"Jamaica\",\n            \"Japan\",\n            \"Jordan\",\n            \"Kenya\",\n            \"Korea, Republic Of\",\n            \"Kuwait\",\n            \"Latvia\",\n            \"Lebanon\",\n            \"Libya\",\n            \"Liechtenstein\",\n            \"Lithuania\",\n            \"Luxembourg\",\n            \"Madagascar\",\n            \"Malaysia\",\n            \"Mali\",\n            \"Malta\",\n            \"Mauritius\",\n            \"Mexico\",\n            \"Moldova, Republic Of\",\n            \"Monaco\",\n            \"Montenegro\",\n            \"Morocco\",\n            \"Mozambique\",\n            \"Netherlands\",\n            \"New Zealand\",\n            \"Nicaragua\",\n            \"Niger\",\n            \"Nigeria\",\n            \"North Macedonia\",\n            \"Norway\",\n            \"Oman\",\n            \"Pakistan\",\n            \"Palestine, State Of\",\n            \"Panama\",\n            \"Paraguay\",\n            \"Peru\",\n            \"Philippines\",\n            \"Poland\",\n            \"Portugal\",\n            \"Qatar\",\n            \"Romania\",\n            \"Saint Lucia\",\n            \"San Marino\",\n            \"Saudi Arabia\",\n            \"Senegal\",\n            \"Serbia\",\n            \"Seychelles\",\n            \"Singapore\",\n            \"Slovakia\",\n            \"Slovenia\",\n            \"South Africa\",\n            \"Spain\",\n            \"Sweden\",\n            \"Switzerland\",\n            \"Taiwan, Province Of China\",\n            \"Tanzania, United Republic Of\",\n            \"Thailand\",\n            \"Trinidad And Tobago\",\n            \"Tunisia\",\n            \"Turks And Caicos Islands\",\n            \"T\\u00fcrkiye\",\n            \"Uganda\",\n            \"Ukraine\",\n            \"United Arab Emirates\",\n            \"Uruguay\",\n            \"Venezuela, Bolivarian Republic Of\",\n            \"Yemen\",\n            \"Zambia\",\n            \"Zimbabwe\"\n        ],\n        \"NETFLIX KIDS\": [\n            \"Germany\",\n            \"Netherlands\",\n            \"South Africa\"\n        ],\n        \"RTL+ MAX AMAZON CHANNEL\": [\n            \"Germany\"\n        ],\n        \"STARZ AMAZON CHANNEL\": [\n            \"Canada\"\n        ],\n        \"TELECINE AMAZON CHANNEL\": [\n            \"Brazil\"\n        ],\n        \"UNIVERSAL+ AMAZON CHANNEL\": [\n            \"Brazil\",\n            \"Chile\",\n            \"Colombia\",\n            \"Mexico\"\n        ]\n    }\n}\n\n    ## Constraints:\n    - It doesn't matter what is the user's country. They will use a VPN\n    - Mention ALL countries where the movie is available\n    - Mention all available options to see the movie (only if info is available)\n    - If nothing is available anywhere, say so.\n    - Do not invent providers or countries not in the input."
+            }
+        ],
+        "end_time": "2026-04-30T07:51:50.477691Z",
+        "output_messages": [
+            {
+                "role": "ai",
+                "content": "I\u2019m sorry, but based on the data you provided, **Shrek\u202f2 is not listed on any of the streaming services** (Amazon Prime Video, Disney\u202f+, HBO\u202fMax, Hulu, Netflix, etc.) for any country.  \n\nIf you\u2019d like to check other sources or use a different database, let me know!"
+            }
+        ],
+        "token_usage": {
+            "prompt_tokens": 2255,
+            "completion_tokens": 497
+        }
+    },
+    {
+        "run_id": "019ddd5f-e5fd-79b1-82b8-c5253abdc902",
+        "model_info": "gpt-oss:20b",
+        "start_time": "2026-04-30T07:52:22.781100Z",
+        "status": "completed",
+        "input_messages": [
+            {
+                "role": "system",
+                "content": "You must extract 'title', 'year', and 'director' from the user query.\n    - If year is not explicitly mentioned, return year = null.\n    - If director is not explicitly mentioned, return director = null.\n    - No extra text, no explanations.\n    Example outputs:\n      {\"title\": \"Inception\", \"year\": 2010, \"director\": \"Christopher Nolan\"}\n      {\"title\": \"Titanic\", \"year\": null, \"director\": null}"
+            },
+            {
+                "role": "human",
+                "content": "Where to stream Shrek 2"
+            }
+        ],
+        "end_time": "2026-04-30T07:52:24.609628Z",
+        "output_messages": [
+            {
+                "role": "ai",
+                "content": "{\"title\": \"Shrek 2\", \"year\": null, \"director\": null}"
+            }
+        ],
+        "token_usage": {
+            "prompt_tokens": 240,
+            "completion_tokens": 20
+        }
+    },
+    {
+        "run_id": "019ddd5f-efc4-7bd1-8f1a-251e6e2e3d01",
+        "model_info": "gpt-oss:20b",
+        "start_time": "2026-04-30T07:52:25.284292Z",
+        "status": "completed",
+        "input_messages": [
+            {
+                "role": "system",
+                "content": "You are selecting exactly ONE movie from the provided candidates.\n        Rules:\n        - Return a JSON object that matches the schema.\n        - 'movie_id' MUST be one of the candidate IDs shown. If no candidate fits, set id = null.\n        - No prose beyond fields in the schema."
+            },
+            {
+                "role": "human",
+                "content": "User query: \u2705 **Parsed Result:**\n- Title: Shrek 2\n- Year: Not specified\n- Director: Not specified\n\n    Candidates (JSON list):\n    [{'id': 809, 'title': 'Shrek 2', 'original_language': 'en', 'release_year': '2004', 'overview': 'Happily ever after never seemed so far far away when a trip to meet the in-laws turns into a hilariously twisted adventure for Shrek and Fiona. With the help of his faithful Donkey, Shrek takes on a potion-brewing Fairy Godmother, the pompous Prince Charming, and the ogre-killer, Puss In Boots.'}]"
+            }
+        ],
+        "end_time": "2026-04-30T07:52:26.992905Z",
+        "output_messages": [
+            {
+                "role": "ai",
+                "content": "{\"movie_id\": 809}"
+            }
+        ],
+        "token_usage": {
+            "prompt_tokens": 332,
+            "completion_tokens": 8
+        }
+    },
+    {
+        "run_id": "019ddd5f-f8b4-7f72-90ac-888748a64d2c",
+        "model_info": "gpt-oss:20b",
+        "start_time": "2026-04-30T07:52:27.572454Z",
+        "status": "completed",
+        "input_messages": [
+            {
+                "role": "human",
+                "content": "Where to stream Shrek 2"
+            },
+            {
+                "role": "ai",
+                "content": "\ud83d\udd0d **Step 1: Parse Movie Query**\n\nInput: \"Where to stream Shrek 2\"\n\nExtracting title, year, and director..."
+            },
+            {
+                "role": "ai",
+                "content": "\u2705 **Parsed Result:**\n- Title: Shrek 2\n- Year: Not specified\n- Director: Not specified"
+            },
+            {
+                "role": "ai",
+                "content": "\ud83c\udfac **Step 2: Search & Choose Movie**\n\nSearching TMDB for: Shrek 2..."
+            },
+            {
+                "role": "ai",
+                "content": "\ud83d\udccb **Found 1 candidates:**\n- Shrek 2 (2004) - ID: 809\n\nSelecting best match..."
+            },
+            {
+                "role": "ai",
+                "content": "\u2705 **Selected:** Shrek 2 (2004)\n\n\ud83c\udf10 Fetching streaming providers..."
+            },
+            {
+                "role": "ai",
+                "content": "\ud83d\udcfa **Providers found!**"
+            },
+            {
+                "role": "ai",
+                "content": "\ud83d\udcdd **Step 3: Generate Final Response**\n\nCompiling streaming information for 'Shrek 2'..."
+            },
+            {
+                "role": "ai",
+                "content": "I\u2019m sorry, but based on the data you provided, **Shrek\u202f2 is not listed on any of the streaming services** (Amazon Prime Video, Disney\u202f+, HBO\u202fMax, Hulu, Netflix, etc.) for any country.  \n\nIf you\u2019d like to check other sources or use a different database, let me know!"
+            },
+            {
+                "role": "human",
+                "content": "Where to stream Shrek 2"
+            },
+            {
+                "role": "ai",
+                "content": "\ud83d\udd0d **Step 1: Parse Movie Query**\n\nInput: \"Where to stream Shrek 2\"\n\nExtracting title, year, and director..."
+            },
+            {
+                "role": "ai",
+                "content": "\u2705 **Parsed Result:**\n- Title: Shrek 2\n- Year: Not specified\n- Director: Not specified"
+            },
+            {
+                "role": "ai",
+                "content": "\ud83c\udfac **Step 2: Search & Choose Movie**\n\nSearching TMDB for: Shrek 2..."
+            },
+            {
+                "role": "ai",
+                "content": "\ud83d\udccb **Found 1 candidates:**\n- Shrek 2 (2004) - ID: 809\n\nSelecting best match..."
+            },
+            {
+                "role": "ai",
+                "content": "\u2705 **Selected:** Shrek 2 (2004)\n\n\ud83c\udf10 Fetching streaming providers..."
+            },
+            {
+                "role": "ai",
+                "content": "\ud83d\udcfa **Providers found!**"
+            },
+            {
+                "role": "system",
+                "content": "You produce the final user-facing answer for an AI system that searches in which services and which countries to stream the movie asked.\n    ## Context\n    - The given data is already filtering the subscription the user has\n    - The user location is the Netherlands, so that is the only Non-VPN option that exists\n\n    ## Data (Streaming Providers):\n    {\n    \"flatrate\": {\n        \"AMAZON PRIME VIDEO\": [\n            \"Algeria\",\n            \"Andorra\",\n            \"Angola\",\n            \"Antigua And Barbuda\",\n            \"Argentina\",\n            \"Australia\",\n            \"Bahamas\",\n            \"Bahrain\",\n            \"Barbados\",\n            \"Belgium\",\n            \"Belize\",\n            \"Bermuda\",\n            \"Bolivia, Plurinational State Of\",\n            \"Brazil\",\n            \"Burkina Faso\",\n            \"Cabo Verde\",\n            \"Cameroon\",\n            \"Canada\",\n            \"Chad\",\n            \"Chile\",\n            \"Colombia\",\n            \"Congo, The Democratic Republic Of The\",\n            \"Costa Rica\",\n            \"C\\u00f4te D'Ivoire\",\n            \"Denmark\",\n            \"Dominican Republic\",\n            \"Ecuador\",\n            \"Egypt\",\n            \"El Salvador\",\n            \"Equatorial Guinea\",\n            \"Fiji\",\n            \"Finland\",\n            \"France\",\n            \"French Guiana\",\n            \"French Polynesia\",\n            \"Ghana\",\n            \"Gibraltar\",\n            \"Guatemala\",\n            \"Guernsey\",\n            \"Guyana\",\n            \"Honduras\",\n            \"Hong Kong\",\n            \"Iceland\",\n            \"India\",\n            \"Indonesia\",\n            \"Iraq\",\n            \"Ireland\",\n            \"Israel\",\n            \"Italy\",\n            \"Jamaica\",\n            \"Japan\",\n            \"Jordan\",\n            \"Kenya\",\n            \"Korea, Republic Of\",\n            \"Kuwait\",\n            \"Lebanon\",\n            \"Libya\",\n            \"Luxembourg\",\n            \"Madagascar\",\n            \"Malawi\",\n            \"Malaysia\",\n            \"Mali\",\n            \"Mexico\",\n            \"Monaco\",\n            \"Morocco\",\n            \"Mozambique\",\n            \"Netherlands\",\n            \"New Zealand\",\n            \"Nicaragua\",\n            \"Niger\",\n            \"Nigeria\",\n            \"Norway\",\n            \"Oman\",\n            \"Palestine, State Of\",\n            \"Panama\",\n            \"Papua New Guinea\",\n            \"Paraguay\",\n            \"Peru\",\n            \"Philippines\",\n            \"Poland\",\n            \"Portugal\",\n            \"Qatar\",\n            \"Saint Lucia\",\n            \"Saudi Arabia\",\n            \"Senegal\",\n            \"Seychelles\",\n            \"Singapore\",\n            \"South Africa\",\n            \"Spain\",\n            \"Sweden\",\n            \"Switzerland\",\n            \"Taiwan, Province Of China\",\n            \"Tanzania, United Republic Of\",\n            \"Thailand\",\n            \"Trinidad And Tobago\",\n            \"Tunisia\",\n            \"Turks And Caicos Islands\",\n            \"T\\u00fcrkiye\",\n            \"Uganda\",\n            \"United Arab Emirates\",\n            \"United Kingdom\",\n            \"Uruguay\",\n            \"Venezuela, Bolivarian Republic Of\",\n            \"Yemen\",\n            \"Zambia\",\n            \"Zimbabwe\"\n        ],\n        \"AMAZON PRIME VIDEO WITH ADS\": [\n            \"Australia\",\n            \"Brazil\",\n            \"Canada\",\n            \"France\",\n            \"India\",\n            \"Italy\",\n            \"Japan\",\n            \"Mexico\",\n            \"Spain\",\n            \"United Kingdom\"\n        ],\n        \"CRAVE AMAZON CHANNEL\": [\n            \"Canada\"\n        ],\n        \"DISNEY PLUS\": [\n            \"Albania\",\n            \"Andorra\",\n            \"Australia\",\n            \"Austria\",\n            \"Belgium\",\n            \"Bosnia And Herzegovina\",\n            \"Bulgaria\",\n            \"Canada\",\n            \"Croatia\",\n            \"Czechia\",\n            \"Denmark\",\n            \"Estonia\",\n            \"Finland\",\n            \"Greece\",\n            \"Hungary\",\n            \"Iceland\",\n            \"Ireland\",\n            \"Italy\",\n            \"Latvia\",\n            \"Liechtenstein\",\n            \"Lithuania\",\n            \"Luxembourg\",\n            \"Malta\",\n            \"Montenegro\",\n            \"Netherlands\",\n            \"New Zealand\",\n            \"North Macedonia\",\n            \"Norway\",\n            \"Poland\",\n            \"Portugal\",\n            \"Romania\",\n            \"San Marino\",\n            \"Serbia\",\n            \"Slovakia\",\n            \"Slovenia\",\n            \"Sweden\",\n            \"Switzerland\",\n            \"T\\u00fcrkiye\",\n            \"United Kingdom\"\n        ],\n        \"HBO MAX\": [\n            \"Antigua And Barbuda\",\n            \"Argentina\",\n            \"Bahamas\",\n            \"Barbados\",\n            \"Belize\",\n            \"Bolivia, Plurinational State Of\",\n            \"Brazil\",\n            \"Chile\",\n            \"Colombia\",\n            \"Costa Rica\",\n            \"Dominican Republic\",\n            \"Ecuador\",\n            \"El Salvador\",\n            \"Guatemala\",\n            \"Guyana\",\n            \"Honduras\",\n            \"Jamaica\",\n            \"Mexico\",\n            \"Nicaragua\",\n            \"Panama\",\n            \"Paraguay\",\n            \"Peru\",\n            \"Saint Lucia\",\n            \"Trinidad And Tobago\",\n            \"Turks And Caicos Islands\",\n            \"Uruguay\",\n            \"Venezuela, Bolivarian Republic Of\"\n        ],\n        \"HBO MAX AMAZON CHANNEL\": [\n            \"Brazil\",\n            \"Colombia\",\n            \"Mexico\"\n        ],\n        \"HULU\": [\n            \"United States\"\n        ],\n        \"NETFLIX\": [\n            \"Albania\",\n            \"Algeria\",\n            \"Andorra\",\n            \"Angola\",\n            \"Antigua And Barbuda\",\n            \"Argentina\",\n            \"Australia\",\n            \"Austria\",\n            \"Azerbaijan\",\n            \"Bahamas\",\n            \"Bahrain\",\n            \"Barbados\",\n            \"Belarus\",\n            \"Belgium\",\n            \"Belize\",\n            \"Bermuda\",\n            \"Bolivia, Plurinational State Of\",\n            \"Bosnia And Herzegovina\",\n            \"Brazil\",\n            \"Bulgaria\",\n            \"Cabo Verde\",\n            \"Cameroon\",\n            \"Canada\",\n            \"Chad\",\n            \"Chile\",\n            \"Colombia\",\n            \"Costa Rica\",\n            \"Croatia\",\n            \"Cuba\",\n            \"Cyprus\",\n            \"Czechia\",\n            \"C\\u00f4te D'Ivoire\",\n            \"Denmark\",\n            \"Dominican Republic\",\n            \"Ecuador\",\n            \"Egypt\",\n            \"El Salvador\",\n            \"Equatorial Guinea\",\n            \"Estonia\",\n            \"Fiji\",\n            \"Finland\",\n            \"France\",\n            \"French Guiana\",\n            \"French Polynesia\",\n            \"Germany\",\n            \"Ghana\",\n            \"Greece\",\n            \"Guatemala\",\n            \"Honduras\",\n            \"Hong Kong\",\n            \"Hungary\",\n            \"Iceland\",\n            \"India\",\n            \"Indonesia\",\n            \"Iraq\",\n            \"Israel\",\n            \"Italy\",\n            \"Jamaica\",\n            \"Japan\",\n            \"Jordan\",\n            \"Kenya\",\n            \"Korea, Republic Of\",\n            \"Kuwait\",\n            \"Latvia\",\n            \"Lebanon\",\n            \"Libya\",\n            \"Liechtenstein\",\n            \"Lithuania\",\n            \"Luxembourg\",\n            \"Madagascar\",\n            \"Malaysia\",\n            \"Mali\",\n            \"Malta\",\n            \"Mauritius\",\n            \"Mexico\",\n            \"Moldova, Republic Of\",\n            \"Monaco\",\n            \"Montenegro\",\n            \"Morocco\",\n            \"Mozambique\",\n            \"Netherlands\",\n            \"New Zealand\",\n            \"Nicaragua\",\n            \"Niger\",\n            \"Nigeria\",\n            \"North Macedonia\",\n            \"Norway\",\n            \"Oman\",\n            \"Pakistan\",\n            \"Palestine, State Of\",\n            \"Panama\",\n            \"Paraguay\",\n            \"Peru\",\n            \"Philippines\",\n            \"Poland\",\n            \"Portugal\",\n            \"Qatar\",\n            \"Romania\",\n            \"Saint Lucia\",\n            \"San Marino\",\n            \"Saudi Arabia\",\n            \"Senegal\",\n            \"Serbia\",\n            \"Seychelles\",\n            \"Singapore\",\n            \"Slovakia\",\n            \"Slovenia\",\n            \"South Africa\",\n            \"Spain\",\n            \"Sweden\",\n            \"Switzerland\",\n            \"Taiwan, Province Of China\",\n            \"Tanzania, United Republic Of\",\n            \"Thailand\",\n            \"Trinidad And Tobago\",\n            \"Tunisia\",\n            \"Turks And Caicos Islands\",\n            \"T\\u00fcrkiye\",\n            \"Uganda\",\n            \"Ukraine\",\n            \"United Arab Emirates\",\n            \"Uruguay\",\n            \"Venezuela, Bolivarian Republic Of\",\n            \"Yemen\",\n            \"Zambia\",\n            \"Zimbabwe\"\n        ],\n        \"NETFLIX KIDS\": [\n            \"Germany\",\n            \"Netherlands\",\n            \"South Africa\"\n        ],\n        \"RTL+ MAX AMAZON CHANNEL\": [\n            \"Germany\"\n        ],\n        \"STARZ AMAZON CHANNEL\": [\n            \"Canada\"\n        ],\n        \"TELECINE AMAZON CHANNEL\": [\n            \"Brazil\"\n        ],\n        \"UNIVERSAL+ AMAZON CHANNEL\": [\n            \"Brazil\",\n            \"Chile\",\n            \"Colombia\",\n            \"Mexico\"\n        ]\n    }\n}\n\n    ## Constraints:\n    - It doesn't matter what is the user's country. They will use a VPN\n    - Mention ALL countries where the movie is available\n    - Mention all available options to see the movie (only if info is available)\n    - If nothing is available anywhere, say so.\n    - Do not invent providers or countries not in the input."
+            }
+        ],
+        "end_time": "2026-04-30T07:52:35.389544Z",
+        "output_messages": [
+            {
+                "role": "ai",
+                "content": "I\u2019m sorry, but **Shrek\u202f2 is not listed on any of the streaming services** (Amazon\u202fPrime Video, Disney\u202f+, HBO\u202fMax, Hulu, Netflix, etc.) for any country in the data you provided. If you\u2019d like to check other sources or a different database, just let me know!"
+            }
+        ],
+        "token_usage": {
+            "prompt_tokens": 2496,
+            "completion_tokens": 306
+        }
+    },
+    {
+        "run_id": "019ddd6b-815a-7c12-9cff-d873983c238e",
+        "model_info": "gpt-oss:120b",
+        "start_time": "2026-04-30T08:05:03.450817Z",
+        "status": "completed",
+        "input_messages": [
+            {
+                "role": "human",
+                "content": "Hello"
+            }
+        ],
+        "end_time": "2026-04-30T08:05:05.301859Z",
+        "output_messages": [
+            {
+                "role": "ai",
+                "content": "Hello! \ud83d\udc4b How can I assist you today?"
+            }
+        ],
+        "token_usage": {
+            "prompt_tokens": 68,
+            "completion_tokens": 45
+        }
+    }
+]
