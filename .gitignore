@@ -33,6 +33,10 @@ iphone_app/MovieAgent/MovieAgent/Config/Secrets.xcconfig
 .vscode/
 *.swp
 *.swo
+xcuserdata/
+
+# Generated Chainlit config
+.chainlit/
 
 # OS
 .DS_Store
