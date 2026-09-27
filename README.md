@@ -1,6 +1,6 @@
 # Where2Stream
 
-A movie and TV streaming assistant with one Python backend and two web clients. The HTTP API is also the integration point for a future iPhone app.
+A movie and TV streaming assistant with a native Swift iPhone app and separate Python/web experiments. The iPhone app calls Mistral and TMDB directly; it does not use the Python API or a web server.
 
 ## Repository layout
 
@@ -15,12 +15,34 @@ web-ui/
   src/                React and TypeScript client
   chainlit/           Chainlit client, theme, and assets
   start.sh            Local React + API launcher
-ios/                  Future native iPhone client
+iphone_app/           Native SwiftUI iPhone chatbot
 archive/              Previous experiments, server, checkpoints, and traces
 Dockerfile            Production React + API image
 ```
 
-The browser and a future iPhone client can call the same API. Keep TMDB and Mistral keys on the backend; clients only receive search results and chatbot replies.
+The browser clients use the Python API. The iPhone app has its own Swift API clients and conversation loop.
+
+## iPhone app
+
+Open `iphone_app/MovieAgent/MovieAgent.xcodeproj` in Xcode. The app target uses `iphone_app/MovieAgent/MovieAgent/Config/Secrets.xcconfig` for both Debug and Release. This file is ignored by Git. It needs these settings:
+
+```text
+MISTRAL_API_KEY=your_key
+MISTRAL_MODEL=mistral-small-latest
+TMDB_read_access_token=your_read_access_token
+TMDB_key=your_v3_key
+```
+
+The TMDB read access token is used for Bearer authentication when present; `TMDB_key` is the fallback. `TAVILY_KEY` may remain in the config file but is not used by the iPhone app. Xcode substitutes the values into the built app's Info.plist. The raw xcconfig is excluded from app resources. This is a personal app, so the compiled credentials are intentionally available to the app.
+
+The Swift app searches TMDB for movies and TV series, calls Mistral with four tool definitions, executes tool calls locally in Swift, and keeps chat history in memory until you start a new chat or close the app. It shows TMDB matches and streaming availability with Netherlands first. No Python process is needed to build or run it.
+
+Run the Swift service smoke checks from the repository root:
+
+```bash
+xcrun swiftc iphone_app/MovieAgent/MovieAgent/AppConfig.swift iphone_app/MovieAgent/MovieAgent/TMDBClient.swift iphone_app/MovieAgent/MovieAgent/MistralClient.swift iphone_app/MovieAgent/Tests/ServiceSmoke.swift -o /tmp/movie-agent-service-smoke
+/tmp/movie-agent-service-smoke
+```
 
 ## Local setup
 
@@ -75,7 +97,7 @@ Start the API, then see <http://localhost:8000/docs> for the interactive endpoin
 | `POST /api/agent` | `query`, optional `conversation_id` | `response` and `conversation_id` |
 | `GET /health` | — | `{ "status": "ok" }` |
 
-For a continuing chatbot conversation, send the returned `conversation_id` with the next query. Conversation memory currently lives in the API process, so it is lost when the process restarts. An iPhone app can use these endpoints without embedding Python or API keys in the app. Deployment, authentication, durable conversation storage, and a native client are future work.
+For a continuing browser chatbot conversation, send the returned `conversation_id` with the next query. Conversation memory currently lives in the API process, so it is lost when the process restarts. The native iPhone app uses its own Swift implementation and never calls these endpoints.
 
 ## Production build
 

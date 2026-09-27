@@ -26,6 +26,7 @@ wheels/
 env/
 venv/
 ENV/
+iphone_app/MovieAgent/MovieAgent/Config/Secrets.xcconfig
 
 # IDE
 .idea/
