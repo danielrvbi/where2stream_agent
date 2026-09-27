@@ -3,12 +3,9 @@ import json
 import requests
 import pandas as pd
 import pycountry
-import asyncio
-import re
-import chainlit as cl
+from pathlib import Path
 from datetime import datetime
 from string import ascii_uppercase
-from textwrap import dedent as ded
 from typing import Any, Dict, List, Optional
 from uuid import UUID
 
@@ -18,7 +15,8 @@ from langchain_core.outputs import LLMResult
 from langchain_mistralai import ChatMistralAI
 from dotenv import load_dotenv
 
-load_dotenv()
+PROJECT_ROOT = Path(os.getenv("MOVIE_AGENT_ROOT", Path(__file__).resolve().parents[2]))
+load_dotenv(PROJECT_ROOT / ".env")
 
 # Constants
 TMDB_API_KEY = os.getenv("TMDB_API_KEY") or os.getenv("TMDB_key")
@@ -26,9 +24,6 @@ TMDB_BASE = "https://api.themoviedb.org/3"
 SUBSCRIBED = {"NETFLIX", "AMAZON", "HBO", "MAX", "APPLE", "DISNEY", "HULU", "TUBI"}
 RETIRED_MODELS = {"glm-4.6:cloud"}
 DEFAULT_MODEL = "mistral-small-latest"
-
-# Utility assignments
-dedent = lambda x: ded(x.strip())
 
 class SimpleJSONTraceHandler(BaseCallbackHandler):
     def __init__(self, filepath: str = "simple_traces.json"):
@@ -105,7 +100,9 @@ class SimpleJSONTraceHandler(BaseCallbackHandler):
         self._save_traces()
 
 # Tracing instance
-json_tracer = SimpleJSONTraceHandler(filepath="agent_traces.json")
+json_tracer = SimpleJSONTraceHandler(
+    filepath=str(Path(os.getenv("MOVIE_AGENT_TRACE_FILE", Path.cwd() / "agent_traces.json")))
+)
 
 def get_available_models():
     """Return the configured remote model for the movie agent."""
@@ -123,16 +120,10 @@ def get_model(model_name: str = DEFAULT_MODEL) -> ChatMistralAI:
         callbacks=[json_tracer],
     )
 
-# Initialize shared LLMs
-llm_small = get_model()
-
 def _rq(url: str, params: Dict[str, Any]) -> Dict[str, Any]:
     r = requests.get(url, params=params, timeout=25)
     r.raise_for_status()
     return r.json()
-
-def update_dict(a, b):
-    return {**a, **b}
 
 def rename_country(country):
     name = pycountry.countries.get(alpha_2=country).name
@@ -196,65 +187,3 @@ def tmdb_table(results) -> dict:
             .to_dict()
         )
     return {}
-
-def build_streaming_actions(agent_reply: str, fallback_title: str) -> list[cl.Action]:
-    actions: list[cl.Action] = []
-    list_matches = re.findall(r"^\d+\.\s+(.*?)$", agent_reply, re.MULTILINE)
-
-    if list_matches:
-        for match in list_matches:
-            clean_title = match.replace("**", "").strip()
-            actions.append(
-                cl.Action(
-                    name="find_streaming",
-                    payload={"movie_title": clean_title},
-                    label=f"🍿 Stream {clean_title}",
-                    tooltip=f"Check streaming for {clean_title}",
-                )
-            )
-    elif "overview" in agent_reply.lower() or "release" in agent_reply.lower():
-        actions = [
-            cl.Action(
-                name="find_streaming",
-                payload={"movie_title": fallback_title},
-                label="🍿 Where to Stream?",
-                tooltip="Click to find where to watch this",
-            )
-        ]
-
-    return actions
-    
-async def summarize_tool_output(step: cl.Step, raw_data: Any):
-    "Summarize tool output in the background using first-person narration."
-    try:
-        # If it's too long, truncate it for the summary LLM
-        if isinstance(raw_data, str):
-            serialized = raw_data[:2000]
-        else:
-            serialized = json.dumps(raw_data, default=str)[:2000]
-
-        prompt = (
-            "You are an AI assistant narrating your internal actions to a user. "
-            "Write a single, very brief sentence explaining what you just did or found based on the data below. "
-            "You MUST speak in the first person (e.g., 'I just searched for...', 'I found that...'). "
-            "Output ONLY the sentence. Do not use any Markdown formatting, asterisks, or quotes. "
-            f"Result data: {serialized}"
-        )
-        
-        summary_response = await llm_small.ainvoke(prompt)
-        
-        content = summary_response.content
-        if isinstance(content, list):
-            content = "".join(part.get("text", "") if isinstance(part, dict) else str(part) for part in content)
-        
-        clean_summary = content.replace('"', '').replace('*', '').strip()
-        
-        # Update the step output with the summary
-        step.input = "" # Hide the raw input block
-        step.output = clean_summary
-        await step.update()
-        
-    except Exception as e:
-        # Silently fail or provide a generic message to keep the UI clean
-        step.output = "I've processed the results."
-        await step.update()

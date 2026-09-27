@@ -26,12 +26,17 @@ wheels/
 env/
 venv/
 ENV/
+iphone_app/MovieAgent/MovieAgent/Config/Secrets.xcconfig
 
 # IDE
 .idea/
 .vscode/
 *.swp
 *.swo
+xcuserdata/
+
+# Generated Chainlit config
+.chainlit/
 
 # OS
 .DS_Store
@@ -47,6 +52,7 @@ dist/
 # Logs
 *.log
 npm-debug.log*
+agent_traces.json
 
 # Cache
 .cache/

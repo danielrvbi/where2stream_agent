@@ -1,0 +1,27 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "where2stream-backend"
+version = "0.1.0"
+description = "Shared movie chatbot and HTTP API"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "python-multipart",
+    "python-dotenv",
+    "langchain-core",
+    "langchain-mistralai",
+    "langgraph",
+    "pandas",
+    "pycountry",
+    "requests",
+]
+
+[project.optional-dependencies]
+chainlit = ["chainlit"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["movie_agent"]
