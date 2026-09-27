@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { MovieSearchResult, StreamingResponse, SearchState } from './types';
+import React, { useState, useCallback } from 'react';
+import { MovieSearchResult, SearchState } from './types';
 import { searchMovies, getStreamingInfo } from './api';
 import SearchBar from './components/SearchBar';
 import MovieCard from './components/MovieCard';
@@ -137,7 +137,6 @@ const App: React.FC = () => {
         <div className="progress-section">
           <ProgressIndicator
             currentStep={getCurrentStepIndex()}
-            totalSteps={steps.length}
             steps={steps}
           />
         </div>

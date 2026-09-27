@@ -2,13 +2,11 @@ import React from 'react';
 
 interface ProgressIndicatorProps {
   currentStep: number;
-  totalSteps: number;
   steps: string[];
 }
 
 const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({ 
   currentStep, 
-  totalSteps, 
   steps 
 }) => {
   return (
@@ -18,7 +16,6 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
           const stepNumber = index + 1;
           const isCompleted = stepNumber < currentStep;
           const isCurrent = stepNumber === currentStep;
-          const isUpcoming = stepNumber > currentStep;
 
           return (
             <div key={index} className="step-item">
