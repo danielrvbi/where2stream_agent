@@ -5,7 +5,7 @@ from langchain_core.runnables import RunnableConfig
 # Local imports
 from agent_v2 import get_agent
 from utils import (
-    llm_small, get_all_ollama_models, build_streaming_actions,
+    llm_small, get_available_models, build_streaming_actions,
     summarize_tool_output, get_default_model, RETIRED_MODELS
 )
 
@@ -89,7 +89,7 @@ async def run_agent_prompt(user_prompt: str, button_fallback_title: str) -> None
             content=(
                 f"I couldn't run the agent with `{model_name}`.\n\n"
                 f"Error: `{exc}`\n\n"
-                "Pick another Ollama model from settings, or set `MOVIE_AGENT_MODEL` in `.env`."
+                "Check that `MISTRAL_API_KEY` is configured in the environment."
             ),
             author=BOT_NAME,
         ).send()
@@ -103,7 +103,7 @@ async def run_agent_prompt(user_prompt: str, button_fallback_title: str) -> None
 @cl.on_chat_start
 async def on_chat_start():
     # Load available models
-    models = get_all_ollama_models()
+    models = get_available_models()
     default_model = get_default_model(models)
     
     # Set up settings panel
@@ -111,10 +111,10 @@ async def on_chat_start():
         [
             cl.input_widget.Select(
                 id="model",
-                label="Ollama Model",
+                label="Mistral Model",
                 values=models if models else [default_model],
                 initial_value=default_model,
-                description="Select the Ollama model to use for the agent.",
+                description="Model used by the movie agent.",
             )
         ]
     ).send()

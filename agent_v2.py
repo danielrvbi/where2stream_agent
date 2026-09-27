@@ -11,12 +11,12 @@ from langgraph.checkpoint.memory import MemorySaver
 # Local imports
 from utils import (
     TMDB_API_KEY, TMDB_BASE, DEFAULT_MODEL, SUBSCRIBED,
-    get_ollama_model, get_all_ollama_models, _rq, tmdb_table
+    get_model, _rq, tmdb_table
 )
 
-def get_ollama_model_with_tools(model_name: str, tools: list):
-    """Initializes a ChatOllama instance with tools bound."""
-    return get_ollama_model(model_name).bind_tools(tools)
+def get_model_with_tools(model_name: str, tools: list):
+    """Initialize the Mistral model with the movie tools bound."""
+    return get_model(model_name).bind_tools(tools)
 
 @tool
 def tmdb_search_movie(
@@ -153,7 +153,7 @@ def agent(state: MessagesState, config: RunnableConfig):
 
     # Dynamic model selection from config
     model_name = config.get("configurable", {}).get("model_name", DEFAULT_MODEL)
-    current_llm = get_ollama_model_with_tools(model_name, tools)
+    current_llm = get_model_with_tools(model_name, tools)
 
     # Invoke the LLM (which is aware of the tools)
     response = current_llm.invoke(messages)

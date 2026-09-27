@@ -1,0 +1,76 @@
+/* Cinematic Theme for Movie Agent */
+
+:root {
+  --background: #000000;
+  --paper: #1A0B0C;
+  --text-agent: #D4AF37; /* Oscar Gold for readability on black */
+  --text-user: #FDF6E3;  /* Cream */
+  --primary: #B9090B;    /* Theater Red */
+  --secondary: #D4AF37;  /* Oscar Gold */
+}
+
+/* 1. Force the entire app background to black */
+html, body, #root, main, .cl-chat-container {
+  background-color: var(--background) !important;
+}
+
+/* 2. Fix the Agent's Text (Making it Gold/Readable) */
+/* Chainlit doesn't put agent text in a bubble by default, so we style the text directly */
+.cl-message-content,
+.cl-message-content p,
+.cl-markdown {
+  color: var(--text-agent) !important;
+  font-size: 16px;
+}
+
+/* 3. Style the User's Message Bubble (Theater Red/Brown) */
+.cl-message[data-author="User"] > div,
+.cl-message[data-author="user"] > div {
+  background-color: var(--paper) !important;
+  color: var(--text-user) !important;
+  border: 1px solid var(--primary) !important;
+  border-radius: 12px !important;
+}
+
+/* Force User text inside the bubble to be light */
+.cl-message[data-author="User"] .cl-message-content p,
+.cl-message[data-author="user"] .cl-message-content p {
+  color: var(--text-user) !important;
+}
+
+/* 4. Fix the "Used agent" step text so it isn't invisible */
+.cl-step-name, .cl-step-output, .cl-message-author {
+  color: #888888 !important; /* Subtle gray */
+}
+
+/* 5. Primary Buttons (Theater Red) */
+button.cl-action-button, .cl-button-primary {
+  background-color: var(--primary) !important;
+  color: white !important;
+  border: 1px solid var(--secondary) !important;
+  transition: all 0.3s ease;
+}
+
+button.cl-action-button:hover {
+  background-color: #d10a0d !important;
+  box-shadow: 0 0 10px var(--secondary);
+}
+
+/* 6. Input Area Fix */
+#chat-input,
+textarea,
+.MuiInputBase-root,
+.MuiInputBase-input {
+  background-color: var(--paper) !important; /* Forces the dark brown/black */
+  color: var(--text-user) !important;        /* Forces the light cream text */
+}
+
+/* Optional: Make the area around the input box match the main background */
+.cl-input-container {
+  background-color: transparent !important;
+  border-top: 2px solid var(--secondary) !important;
+}
+
+textarea {
+  color: var(--text-user) !important;
+}
