@@ -9,7 +9,7 @@ from langgraph.prebuilt import ToolNode, tools_condition
 from langgraph.checkpoint.memory import MemorySaver
 
 # Local imports
-from utils import (
+from .utils import (
     TMDB_API_KEY, TMDB_BASE, DEFAULT_MODEL, SUBSCRIBED,
     get_model, _rq, tmdb_table
 )
@@ -44,7 +44,8 @@ def tmdb_search_movie(
                 "title": r.get("title"),
                 "original_language": (r.get("original_language") or ""),
                 "release_year": (r.get("release_date") or "")[:4],
-                "overview": r.get("overview"),
+                "overview": r.get("overview") or "",
+                "poster_path": r.get("poster_path"),
             }
         )
     return cands
@@ -94,7 +95,8 @@ def tmdb_search_tv(
                 "title": r.get("name"),
                 "original_language": (r.get("original_language") or ""),
                 "release_year": (r.get("first_air_date") or "")[:4],
-                "overview": r.get("overview"),
+                "overview": r.get("overview") or "",
+                "poster_path": r.get("poster_path"),
             }
         )
     return cands

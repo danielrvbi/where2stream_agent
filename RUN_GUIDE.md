@@ -1,15 +1,20 @@
-# Running MovieBot
+# Quick run guide
 
-From the workspace root, start the Chainlit app with the shared UV environment:
+Install the Python package and frontend dependencies once using the steps in [README.md](README.md).
+
+React plus API:
 
 ```bash
-./agents_env.sh run movie_agent chainlit run chainapp.py
+source .venv/bin/activate
+./web-ui/start.sh
 ```
 
-Open [http://localhost:8000](http://localhost:8000) in a browser and ask:
+Chainlit:
 
-```text
-Where can I stream Planet Terror (2007)?
+```bash
+source .venv/bin/activate
+cd web-ui/chainlit
+chainlit run app.py --port 8001
 ```
 
-The command uses the shared `.venv` and loads the movie agent configuration from `movie_agent/.env`.
+Set `TMDB_API_KEY` and `MISTRAL_API_KEY` in the repository root `.env` before starting either UI.

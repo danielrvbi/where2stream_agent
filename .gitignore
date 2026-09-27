@@ -47,6 +47,7 @@ dist/
 # Logs
 *.log
 npm-debug.log*
+agent_traces.json
 
 # Cache
 .cache/

@@ -3,11 +3,9 @@ import chainlit as cl
 from langchain_core.runnables import RunnableConfig
 
 # Local imports
-from agent_v2 import get_agent
-from utils import (
-    llm_small, get_available_models, build_streaming_actions,
-    summarize_tool_output, get_default_model, RETIRED_MODELS
-)
+from movie_agent.agent import get_agent
+from movie_agent.utils import get_available_models, get_default_model, RETIRED_MODELS
+from helpers import build_streaming_actions, summarize_tool_output
 
 BOT_NAME = "MovieBot"
 
