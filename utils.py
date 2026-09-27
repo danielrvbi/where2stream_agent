@@ -15,8 +15,7 @@ from uuid import UUID
 from langchain_core.callbacks import BaseCallbackHandler
 from langchain_core.messages import BaseMessage
 from langchain_core.outputs import LLMResult
-from langchain_ollama import ChatOllama
-from ollama import Client
+from langchain_mistralai import ChatMistralAI
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -26,12 +25,7 @@ TMDB_API_KEY = os.getenv("TMDB_API_KEY") or os.getenv("TMDB_key")
 TMDB_BASE = "https://api.themoviedb.org/3"
 SUBSCRIBED = {"NETFLIX", "AMAZON", "HBO", "MAX", "APPLE", "DISNEY", "HULU", "TUBI"}
 RETIRED_MODELS = {"glm-4.6:cloud"}
-DEFAULT_MODEL = os.getenv("MOVIE_AGENT_MODEL", "gpt-oss:20b")
-PREFERRED_MODELS = [
-    DEFAULT_MODEL,
-    "mistral-small3.2:24b",
-    "llama3.1:8b",
-]
+DEFAULT_MODEL = "mistral-small-latest"
 
 # Utility assignments
 dedent = lambda x: ded(x.strip())
@@ -113,42 +107,24 @@ class SimpleJSONTraceHandler(BaseCallbackHandler):
 # Tracing instance
 json_tracer = SimpleJSONTraceHandler(filepath="agent_traces.json")
 
-def get_all_ollama_models():
-    """Retrieves a list of all local Ollama models."""
-    try:
-        local_client = Client()
-        local_response = local_client.list()
-        if hasattr(local_response, "models"):
-            models = local_response.models
-        else:
-            models = local_response.get("models", [])
-        names = []
-        for model in models:
-            if hasattr(model, "model"):
-                name = model.model
-            else:
-                name = model.get("model")
-            if name and name not in RETIRED_MODELS:
-                names.append(name)
-        return names
-    except Exception as e:
-        print(f"Error fetching local models: {e}")
-        return []
+def get_available_models():
+    """Return the configured remote model for the movie agent."""
+    return [DEFAULT_MODEL]
 
 def get_default_model(models: Optional[List[str]] = None) -> str:
-    """Pick the first preferred model that is actually available."""
-    available = models if models is not None else get_all_ollama_models()
-    for model in PREFERRED_MODELS:
-        if model in available and model not in RETIRED_MODELS:
-            return model
-    return available[0] if available else DEFAULT_MODEL
+    """Return the configured Mistral model."""
+    return DEFAULT_MODEL
 
-def get_ollama_model(model_name: str) -> ChatOllama:
-    """Initializes a ChatOllama instance for the specified model."""
-    return ChatOllama(model=model_name, temperature=0, callbacks=[json_tracer])
+def get_model(model_name: str = DEFAULT_MODEL) -> ChatMistralAI:
+    """Initialize the configured Mistral chat model."""
+    return ChatMistralAI(
+        model=DEFAULT_MODEL,
+        temperature=0,
+        callbacks=[json_tracer],
+    )
 
 # Initialize shared LLMs
-llm_small = get_ollama_model("llama3.1:8b")
+llm_small = get_model()
 
 def _rq(url: str, params: Dict[str, Any]) -> Dict[str, Any]:
     r = requests.get(url, params=params, timeout=25)
